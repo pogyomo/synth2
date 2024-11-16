@@ -16,6 +16,10 @@
 
 #include <clap/plugin-features.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "synth2/ext/audio-ports.h"
+#include "synth2/ext/note-ports.h"
 
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     return true;
@@ -58,7 +62,13 @@ synth2_plugin_process(const struct clap_plugin *plugin, const clap_process_t *pr
 
 static const void *
 synth2_plugin_get_extension(const struct clap_plugin *plugin, const char *id) {
-    return NULL;
+    if (strcmp(id, CLAP_EXT_AUDIO_PORTS) == 0) {
+        return &synth2_plugin_audio_ports;
+    } else if (strcmp(id, CLAP_EXT_NOTE_PORTS) == 0) {
+        return &synth2_plugin_note_ports;
+    } else {
+        return NULL;
+    }
 }
 
 static void synth2_plugin_on_main_thread(const struct clap_plugin *plugin) {
