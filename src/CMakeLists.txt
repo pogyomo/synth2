@@ -1,6 +1,7 @@
 add_library(${PROJECT_NAME} MODULE
     entry.c
     factory/plugin-factory.c
+    plugin.c
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
