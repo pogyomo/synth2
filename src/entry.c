@@ -34,7 +34,7 @@ static const void *synth2_entry_get_factory(const char *factory_id) {
 }
 
 const clap_plugin_entry_t clap_entry = {
-    .clap_version = CLAP_VERSION,
+    .clap_version = CLAP_VERSION_INIT,
     .init = synth2_entry_init,
     .deinit = synth2_entry_deinit,
     .get_factory = synth2_entry_get_factory,

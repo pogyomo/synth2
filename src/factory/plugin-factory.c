@@ -14,17 +14,25 @@
 
 #include "synth2/factory/plugin-factory.h"
 
+#include <string.h>
+
+#include "synth2/plugin.h"
+
 static uint32_t synth2_plugin_factory_get_plugin_count(
     const clap_plugin_factory_t *factory
 ) {
-    return 0;
+    return 1;
 }
 
 static const clap_plugin_descriptor_t *synth2_plugin_factory_get_plugin_descriptor(
     const clap_plugin_factory_t *factory,
     uint32_t index
 ) {
-    return NULL;
+    if (index > 0) {
+        return NULL;
+    } else {
+        return &synth2_plugin_descriptor;
+    }
 }
 
 static const clap_plugin_t *synth2_plugin_factory_create_plugin(
@@ -32,7 +40,11 @@ static const clap_plugin_t *synth2_plugin_factory_create_plugin(
     const clap_host_t *host,
     const char *plugin_id
 ) {
-    return NULL;
+    if (strcmp(plugin_id, synth2_plugin_descriptor.id) == 0) {
+        return synth2_plugin_create(host);
+    } else {
+        return NULL;
+    }
 }
 
 const clap_plugin_factory_t synth2_plugin_factory = {
