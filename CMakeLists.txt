@@ -5,4 +5,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 
 add_subdirectory(libs/clap)
+add_subdirectory(libs/raygui)
 add_subdirectory(src)
