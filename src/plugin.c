@@ -27,7 +27,7 @@
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-        plug->voices[i].used = false;
+        plug->voices[i].state = SYNTH2_PLUGIN_VOICE_UNUSED;
     }
     return true;
 }
@@ -102,7 +102,7 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
 
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_plugin_voice_t *voice = &plug->voices[i];
-        if (!voice->holding) {
+        if (voice->state == SYNTH2_PLUGIN_VOICE_POST_PROCESS) {
             clap_event_note_t event;
             event.header.size = sizeof(event);
             event.header.time = 0;
@@ -114,7 +114,7 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
             event.channel = voice->channel;
             event.port_index = 0;
             process->out_events->try_push(process->out_events, &event.header);
-            voice->used = false;  // Set unused so new sound can use this voice.
+            voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
         };
     }
 

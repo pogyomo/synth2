@@ -27,11 +27,14 @@ void synth2_plugin_render_audio(
         float output = 0.0f;
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
             synth2_plugin_voice_t *voice = &plugin->voices[i];
-            if (voice->used && voice->holding) {
+            if (voice->state == SYNTH2_PLUGIN_VOICE_HOLDING) {
                 output += sinf(voice->phase * 2.0f * 3.14159f) * 0.2f;
                 voice->phase +=
                     440.0f * exp2f((voice->key - 57.0f) / 12.0f) / plugin->sample_rate;
                 voice->phase -= floorf(voice->phase);
+            } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
+                // Currently we immediately stops sound and goto post process.
+                voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
             }
         }
         outputL[i] = outputR[i] = output;

@@ -24,10 +24,9 @@ void synth2_plugin_process_event(
         const clap_event_note_t *note = (const clap_event_note_t *)event;
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
             synth2_plugin_voice_t *voice = &plugin->voices[i];
-            if (voice->used) continue;
+            if (voice->state != SYNTH2_PLUGIN_VOICE_UNUSED) continue;
 
-            voice->used = true;
-            voice->holding = true;
+            voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
             voice->phase = 0.0f;
             voice->note_id = note->note_id;
             voice->channel = note->channel;
@@ -38,12 +37,12 @@ void synth2_plugin_process_event(
         const clap_event_note_t *note = (const clap_event_note_t *)event;
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
             synth2_plugin_voice_t *voice = &plugin->voices[i];
-            if (!voice->used) continue;
+            if (voice->state != SYNTH2_PLUGIN_VOICE_HOLDING) continue;
             if (note->key != -1 && voice->key != note->key) continue;
             if (note->note_id != -1 && voice->note_id != note->note_id) continue;
             if (note->channel != -1 && voice->channel != note->channel) continue;
 
-            voice->holding = false;
+            voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
             break;
         }
     }
