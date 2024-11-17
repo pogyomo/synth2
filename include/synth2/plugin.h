@@ -17,9 +17,17 @@
 
 #include <clap/plugin.h>
 
+#include "synth2/plugin/voice.h"
+
 typedef struct synth2_plugin {
     const clap_host_t *host;
     clap_plugin_t plugin;
+
+    /// Host's sample rate.
+    double sample_rate;
+
+    // Currently at most one sound can be generated.
+    synth2_plugin_voice_t voice;
 } synth2_plugin_t;
 
 /// Descriptor of synth2 plugin.

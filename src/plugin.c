@@ -14,12 +14,15 @@
 
 #include "synth2/plugin.h"
 
+#include <assert.h>
 #include <clap/plugin-features.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "synth2/ext/audio-ports.h"
 #include "synth2/ext/note-ports.h"
+#include "synth2/plugin/process-event.h"
+#include "synth2/plugin/render-audio.h"
 
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     return true;
@@ -31,37 +34,73 @@ static void synth2_plugin_destroy(const clap_plugin_t *plugin) {
 }
 
 static bool synth2_plugin_activate(
-    const struct clap_plugin *plugin,
+    const clap_plugin_t *plugin,
     double sample_rate,
     uint32_t min_frames_count,
     uint32_t max_frames_count
 ) {
+    synth2_plugin_t *plug = plugin->plugin_data;
+    plug->sample_rate = sample_rate;
     return true;
 }
 
-static void synth2_plugin_deactivate(const struct clap_plugin *plugin) {
+static void synth2_plugin_deactivate(const clap_plugin_t *plugin) {
     return;
 }
 
-static bool synth2_plugin_start_processing(const struct clap_plugin *plugin) {
+static bool synth2_plugin_start_processing(const clap_plugin_t *plugin) {
     return true;
 }
 
-static void synth2_plugin_stop_processing(const struct clap_plugin *plugin) {
+static void synth2_plugin_stop_processing(const clap_plugin_t *plugin) {
     return;
 }
 
-static void synth2_plugin_reset(const struct clap_plugin *plugin) {
+static void synth2_plugin_reset(const clap_plugin_t *plugin) {
     return;
 }
 
 static clap_process_status
-synth2_plugin_process(const struct clap_plugin *plugin, const clap_process_t *process) {
-    return CLAP_PROCESS_SLEEP;
+synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
+    synth2_plugin_t *plug = plugin->plugin_data;
+
+    assert(process->audio_inputs_count == 0);
+    assert(process->audio_outputs_count == 1);
+
+    const uint32_t frames_count = process->frames_count;
+    const uint32_t input_events_count = process->in_events->size(process->in_events);
+    uint32_t event_index = 0;
+    uint32_t next_event_frame = input_events_count > 0 ? 0 : frames_count;
+
+    for (uint32_t i = 0; i < frames_count;) {
+        while (event_index < input_events_count && next_event_frame == i) {
+            const clap_event_header_t *header =
+                process->in_events->get(process->in_events, event_index);
+            if (header->time != i) {
+                next_event_frame = header->time;
+                break;
+            }
+
+            synth2_plugin_process_event(plug, header);
+            ++event_index;
+
+            if (event_index == input_events_count) {
+                next_event_frame = frames_count;
+                break;
+            }
+        }
+
+        float *outoutL = process->audio_outputs[0].data32[0];
+        float *outoutR = process->audio_outputs[0].data32[1];
+        synth2_plugin_render_audio(plug, i, next_event_frame, outoutL, outoutR);
+        i = next_event_frame;
+    }
+
+    return CLAP_PROCESS_CONTINUE;
 }
 
 static const void *
-synth2_plugin_get_extension(const struct clap_plugin *plugin, const char *id) {
+synth2_plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
     if (strcmp(id, CLAP_EXT_AUDIO_PORTS) == 0) {
         return &synth2_plugin_audio_ports;
     } else if (strcmp(id, CLAP_EXT_NOTE_PORTS) == 0) {
@@ -71,7 +110,7 @@ synth2_plugin_get_extension(const struct clap_plugin *plugin, const char *id) {
     }
 }
 
-static void synth2_plugin_on_main_thread(const struct clap_plugin *plugin) {
+static void synth2_plugin_on_main_thread(const clap_plugin_t *plugin) {
     return;
 }
 

@@ -1,7 +1,11 @@
 add_library(${PROJECT_NAME} MODULE
     entry.c
+    ext/audio-ports.c
+    ext/note-ports.c
     factory/plugin-factory.c
     plugin.c
+    plugin/process-event.c
+    plugin/render-audio.c
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
