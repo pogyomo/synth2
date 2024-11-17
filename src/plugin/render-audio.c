@@ -33,6 +33,8 @@ void synth2_plugin_render_audio(
                     440.0f * exp2f((voice->key - 57.0f) / 12.0f) / plugin->sample_rate;
                 voice->phase -= floorf(voice->phase);
             } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
+                // TODO: It maybe good to add short decay for preventing clipping noise.
+
                 // Currently we immediately stops sound and goto post process.
                 voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
             }
