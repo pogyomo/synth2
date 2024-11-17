@@ -122,7 +122,7 @@ static const char *synth2_plugin_descriptor_features[] = {
 };
 
 const clap_plugin_descriptor_t synth2_plugin_descriptor = {
-    .clap_version = CLAP_VERSION,
+    .clap_version = CLAP_VERSION_INIT,
     .id = "com.github.pogyomo.synth2",
     .name = "synth2",
     .vendor = "pogyomo",
