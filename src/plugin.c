@@ -76,7 +76,9 @@ static void synth2_plugin_on_main_thread(const struct clap_plugin *plugin) {
 }
 
 static const char *synth2_plugin_descriptor_features[] = {
+    CLAP_PLUGIN_FEATURE_INSTRUMENT,
     CLAP_PLUGIN_FEATURE_SYNTHESIZER,
+    CLAP_PLUGIN_FEATURE_STEREO,
     NULL
 };
 
