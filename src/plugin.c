@@ -75,6 +75,11 @@ static void synth2_plugin_on_main_thread(const struct clap_plugin *plugin) {
     return;
 }
 
+static const char *synth2_plugin_descriptor_features[] = {
+    CLAP_PLUGIN_FEATURE_SYNTHESIZER,
+    NULL
+};
+
 const clap_plugin_descriptor_t synth2_plugin_descriptor = {
     .clap_version = CLAP_VERSION,
     .id = "com.github.pogyomo.synth2",
@@ -85,7 +90,7 @@ const clap_plugin_descriptor_t synth2_plugin_descriptor = {
     .support_url = NULL,
     .version = "0.1.0",
     .description = "Yet another synthesizer",
-    .features = (const char *[]){CLAP_PLUGIN_FEATURE_SYNTHESIZER},
+    .features = synth2_plugin_descriptor_features,
 };
 
 const clap_plugin_t *synth2_plugin_create(const clap_host_t *host) {
