@@ -25,6 +25,10 @@
 #include "synth2/plugin/render-audio.h"
 
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
+    synth2_plugin_t *plug = plugin->plugin_data;
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        plug->voices[i].used = false;
+    }
     return true;
 }
 
@@ -94,6 +98,24 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
         float *outoutR = process->audio_outputs[0].data32[1];
         synth2_plugin_render_audio(plug, i, next_event_frame, outoutL, outoutR);
         i = next_event_frame;
+    }
+
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        synth2_plugin_voice_t *voice = &plug->voices[i];
+        if (!voice->holding) {
+            clap_event_note_t event;
+            event.header.size = sizeof(event);
+            event.header.time = 0;
+            event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+            event.header.type = CLAP_EVENT_NOTE_END;
+            event.header.flags = 0;
+            event.key = voice->key;
+            event.note_id = voice->note_id;
+            event.channel = voice->channel;
+            event.port_index = 0;
+            process->out_events->try_push(process->out_events, &event.header);
+            voice->used = false;  // Set unused so new sound can use this voice.
+        };
     }
 
     return CLAP_PROCESS_CONTINUE;

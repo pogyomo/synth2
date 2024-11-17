@@ -19,6 +19,8 @@
 
 #include "synth2/plugin/voice.h"
 
+#define SYNTH2_PLUGIN_MAX_VOICES 32
+
 typedef struct synth2_plugin {
     const clap_host_t *host;
     clap_plugin_t plugin;
@@ -26,8 +28,8 @@ typedef struct synth2_plugin {
     /// Host's sample rate.
     double sample_rate;
 
-    // Currently at most one sound can be generated.
-    synth2_plugin_voice_t voice;
+    /// Voices to be used to render audio.
+    synth2_plugin_voice_t voices[SYNTH2_PLUGIN_MAX_VOICES];
 } synth2_plugin_t;
 
 /// Descriptor of synth2 plugin.

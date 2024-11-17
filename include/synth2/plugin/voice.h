@@ -18,8 +18,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/// This struct represent a ringing sounds.
+/// This struct represent a maybe playing sounds.
 typedef struct synth2_plugin_voice {
+    /// True if this voice is associated with any being pressed key.
+    /// Otherwise this object can be used to associate with newly being played sound.
+    bool used;
+
     /// True if corresponding key is being pressed.
     bool holding;
 

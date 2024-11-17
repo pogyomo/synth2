@@ -22,18 +22,29 @@ void synth2_plugin_process_event(
 
     if (event->type == CLAP_EVENT_NOTE_ON) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
-        plugin->voice = (synth2_plugin_voice_t){
-            .holding = true,
-            .phase = 0.0,
-            .note_id = note->note_id,
-            .channel = note->channel,
-            .key = note->key,
-        };
+        for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+            synth2_plugin_voice_t *voice = &plugin->voices[i];
+            if (voice->used) continue;
+
+            voice->used = true;
+            voice->holding = true;
+            voice->phase = 0.0f;
+            voice->note_id = note->note_id;
+            voice->channel = note->channel;
+            voice->key = note->key;
+            break;
+        }
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
-        if (note->key != -1 && plugin->voice.key != note->key) return;
-        if (note->note_id != -1 && plugin->voice.note_id != note->note_id) return;
-        if (note->channel != -1 && plugin->voice.channel != note->channel) return;
-        plugin->voice.holding = false;
+        for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+            synth2_plugin_voice_t *voice = &plugin->voices[i];
+            if (!voice->used) continue;
+            if (note->key != -1 && voice->key != note->key) continue;
+            if (note->note_id != -1 && voice->note_id != note->note_id) continue;
+            if (note->channel != -1 && voice->channel != note->channel) continue;
+
+            voice->holding = false;
+            break;
+        }
     }
 }
