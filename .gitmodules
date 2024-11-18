@@ -1,6 +1,6 @@
 [submodule "libs/clap"]
 	path = libs/clap
-	url = git@github.com:free-audio/clap.git
+	url = https://github.com/free-audio/clap.git
 [submodule "libs/raygui/raylib"]
 	path = libs/raygui/raylib
-	url = git@github.com:raysan5/raylib.git
+	url = https://github.com/raysan5/raylib.git
