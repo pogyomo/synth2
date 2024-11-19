@@ -249,8 +249,8 @@ static void GuiEqualizer(int x, int y, equalizer_t *eq) {
 }
 
 int main(void) {
-    const int width = 515;
-    const int height = 395;
+    const int width = 415;
+    const int height = 325;
 
     InitWindow(width, height, "synth2");
     SetTargetFPS(60);
