@@ -3,6 +3,7 @@ add_library(${PROJECT_NAME} MODULE
     ext/audio-ports.c
     ext/note-ports.c
     factory/plugin-factory.c
+    oscillator.c
     plugin.c
     plugin/process-event.c
     plugin/render-audio.c

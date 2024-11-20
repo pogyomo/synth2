@@ -31,6 +31,9 @@ void synth2_plugin_process_event(
             voice->note_id = note->note_id;
             voice->channel = note->channel;
             voice->key = note->key;
+            synth2_oscillator_init(
+                &voice->osc, SYNTH2_OSC_SINE, plugin->sample_rate, voice->key, 0.0, 0.0
+            );
             break;
         }
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {

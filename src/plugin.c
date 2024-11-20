@@ -136,12 +136,14 @@ static void synth2_plugin_on_main_thread(const clap_plugin_t *plugin) {
     return;
 }
 
+// clang-format off
 static const char *synth2_plugin_descriptor_features[] = {
     CLAP_PLUGIN_FEATURE_INSTRUMENT,
     CLAP_PLUGIN_FEATURE_SYNTHESIZER,
     CLAP_PLUGIN_FEATURE_STEREO,
     NULL
 };
+// clang-format on
 
 const clap_plugin_descriptor_t synth2_plugin_descriptor = {
     .clap_version = CLAP_VERSION_INIT,
