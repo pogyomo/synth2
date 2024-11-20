@@ -25,7 +25,6 @@ void synth2_oscillator_init(
     synth2_oscillator_type_t type,
     double sample_rate,
     double key,
-    double phase,
     double duty
 );
 
