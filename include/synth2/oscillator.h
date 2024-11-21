@@ -1,6 +1,8 @@
 #ifndef SYNTH2_OSCILLATOR_H_
 #define SYNTH2_OSCILLATOR_H_
 
+#include <stdint.h>
+
 typedef enum synth2_oscillator_type {
     SYNTH2_OSC_SINE,
     SYNTH2_OSC_TRIANGLE,
@@ -9,8 +11,20 @@ typedef enum synth2_oscillator_type {
 } synth2_oscillator_type_t;
 
 typedef struct synth2_oscillator {
-    /// Parameters for wave generation.
-    double sample_rate, key, phase, duty;
+    /// Sample rate to sample a point of wave.
+    double sample_rate;
+
+    /// Phase in wave. Must be in [0, 2π).
+    double phase;
+
+    /// Duty cycle for square wave generation.
+    double duty;
+
+    /// Previously sampled value.
+    double prev;
+
+    /// MIDI1 key number to generate wave.
+    int16_t key;
 
     /// Sample a point of wave, then advance phase.
     double (*sample)(struct synth2_oscillator *osc);
@@ -24,7 +38,7 @@ void synth2_oscillator_init(
     synth2_oscillator_t *osc,
     synth2_oscillator_type_t type,
     double sample_rate,
-    double key,
+    int16_t key,
     double duty
 );
 
