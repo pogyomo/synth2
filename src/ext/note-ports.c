@@ -14,7 +14,7 @@
 
 #include "synth2/ext/note-ports.h"
 
-#include <stdio.h>
+#include <string.h>
 
 static uint32_t
 synth2_plugin_note_ports_count(const clap_plugin_t *plugin, bool is_input) {
@@ -33,7 +33,7 @@ static bool synth2_plugin_note_ports_get(
     info->supported_dialects =
         CLAP_NOTE_DIALECT_CLAP | CLAP_NOTE_DIALECT_MIDI_MPE | CLAP_NOTE_DIALECT_MIDI2;
     info->preferred_dialect = CLAP_NOTE_DIALECT_CLAP;
-    snprintf(info->name, sizeof(info->name), "");
+    strncpy(info->name, "", sizeof(info->name));
     return true;
 }
 
