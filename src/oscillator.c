@@ -1,5 +1,6 @@
 #include "synth2/oscillator.h"
 
+#include <assert.h>
 #include <math.h>
 
 #define PI 3.141592
@@ -24,57 +25,97 @@ static inline double sample(synth2_oscillator_t *osc, wave_generator gen) {
     return osc->prev;
 }
 
-static inline double gen_sine(double x, double prev, double duty) {
+/// Naive method for sine wave generation.
+static inline double gen_sine_naive(double x, double prev, double duty) {
     return sin(x);
 }
 
-static inline double gen_triangle(double x, double prev, double duty) {
-    return 0.0;  // TODO
+/// Naive method for triangle wave generation.
+static inline double gen_triangle_naive(double x, double prev, double duty) {
+    return 0.0;
 }
 
-static inline double gen_saw(double x, double prev, double duty) {
-    return 0.0;  // TODO
+/// Naive method for sawtooth wave generation.
+static inline double gen_saw_naive(double x, double prev, double duty) {
+    return (2.0 * x / PI2) - 1.0;
 }
 
-static inline double gen_square(double x, double prev, double duty) {
-    return 0.0;  // TODO
+/// Naive method for square wave generation.
+static inline double gen_square_naive(double x, double prev, double duty) {
+    return x < PI * duty ? 1.0 : -1.0;
 }
 
-static double sample_sine(synth2_oscillator_t *osc) {
-    return sample(osc, gen_sine);
+/// Type alias for sample in synth2_oscillator_t.
+typedef double (*sample_cb)(synth2_oscillator_t *);
+
+/// Create a sample cb using gen_sine_naive.
+static inline double sample_sine_naive(synth2_oscillator_t *osc) {
+    return sample(osc, gen_sine_naive);
 }
 
-static double sample_triangle(synth2_oscillator_t *osc) {
-    return sample(osc, gen_triangle);
+/// Create a sample cb using gen_triangle_naive.
+static inline double sample_triangle_naive(synth2_oscillator_t *osc) {
+    return sample(osc, gen_triangle_naive);
 }
 
-static double sample_saw(synth2_oscillator_t *osc) {
-    return sample(osc, gen_saw);
+/// Create a sample cb using gen_saw_naive.
+static inline double sample_saw_naive(synth2_oscillator_t *osc) {
+    return sample(osc, gen_saw_naive);
 }
 
-static double sample_square(synth2_oscillator_t *osc) {
-    return sample(osc, gen_square);
+/// Create a sample cb using gen_square_naive.
+static inline double sample_square_naive(synth2_oscillator_t *osc) {
+    return sample(osc, gen_square_naive);
+}
+
+/// Returns sample cb for sine wave by specified method.
+static inline sample_cb get_sample_sine_cb(synth2_oscillator_method_t method) {
+    return sample_sine_naive;
+}
+
+/// Returns sample cb for triangle wave by specified method.
+static inline sample_cb get_sample_triangle_cb(synth2_oscillator_method_t method) {
+    return sample_triangle_naive;
+}
+
+/// Returns sample cb for saw wave by specified method.
+static inline sample_cb get_sample_saw_cb(synth2_oscillator_method_t method) {
+    return sample_saw_naive;
+}
+
+/// Returns sample cb for square wave by specified method.
+static inline sample_cb get_sample_square_cb(synth2_oscillator_method_t method) {
+    return sample_square_naive;
+}
+
+/// Returns sample cb by specified method and wave.
+static inline sample_cb
+get_sample_cb(synth2_oscillator_method_t method, synth2_oscillator_wave_t wave) {
+    if (wave == SYNTH2_OSC_WAVE_SINE) {
+        return get_sample_sine_cb(method);
+    } else if (wave == SYNTH2_OSC_WAVE_TRIANGLE) {
+        return get_sample_triangle_cb(method);
+    } else if (wave == SYNTH2_OSC_WAVE_SAW) {
+        return get_sample_saw_cb(method);
+    } else {
+        return get_sample_square_cb(method);
+    }
 }
 
 void synth2_oscillator_init(
     synth2_oscillator_t *osc,
-    synth2_oscillator_type_t type,
+    synth2_oscillator_method_t method,
+    synth2_oscillator_wave_t wave,
     double sample_rate,
     int16_t key,
     double duty
 ) {
+    assert(method == SYNTH2_OSC_METHOD_NAIVE);
+
     osc->sample_rate = sample_rate;
     osc->key = key;
     osc->phase = 0.0;
     osc->duty = duty;
     osc->prev = 0.0;
-    if (type == SYNTH2_OSC_SINE) {
-        osc->sample = sample_sine;
-    } else if (type == SYNTH2_OSC_TRIANGLE) {
-        osc->sample = sample_triangle;
-    } else if (type == SYNTH2_OSC_SAW) {
-        osc->sample = sample_saw;
-    } else {
-        osc->sample = sample_square;
-    }
+    osc->sample = get_sample_cb(method, wave);
 }

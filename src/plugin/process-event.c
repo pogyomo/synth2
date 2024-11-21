@@ -32,7 +32,8 @@ void synth2_plugin_process_event(
             voice->channel = note->channel;
             voice->key = note->key;
             synth2_oscillator_init(
-                &voice->osc, SYNTH2_OSC_SINE, plugin->sample_rate, voice->key, 0.0
+                &voice->osc, SYNTH2_OSC_METHOD_NAIVE, SYNTH2_OSC_WAVE_SINE,
+                plugin->sample_rate, voice->key, 0.0
             );
             break;
         }

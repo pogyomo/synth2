@@ -3,12 +3,16 @@
 
 #include <stdint.h>
 
-typedef enum synth2_oscillator_type {
-    SYNTH2_OSC_SINE,
-    SYNTH2_OSC_TRIANGLE,
-    SYNTH2_OSC_SAW,
-    SYNTH2_OSC_SQUARE,
-} synth2_oscillator_type_t;
+typedef enum synth2_oscillator_method {
+    SYNTH2_OSC_METHOD_NAIVE,
+} synth2_oscillator_method_t;
+
+typedef enum synth2_oscillator_wave {
+    SYNTH2_OSC_WAVE_SINE,
+    SYNTH2_OSC_WAVE_TRIANGLE,
+    SYNTH2_OSC_WAVE_SAW,
+    SYNTH2_OSC_WAVE_SQUARE,
+} synth2_oscillator_wave_t;
 
 typedef struct synth2_oscillator {
     /// Sample rate to sample a point of wave.
@@ -36,7 +40,8 @@ typedef struct synth2_oscillator {
 /// Otherwise, this parameter is just ignored.
 void synth2_oscillator_init(
     synth2_oscillator_t *osc,
-    synth2_oscillator_type_t type,
+    synth2_oscillator_method_t method,
+    synth2_oscillator_wave_t wave,
     double sample_rate,
     int16_t key,
     double duty
