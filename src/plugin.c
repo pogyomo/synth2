@@ -21,6 +21,7 @@
 
 #include "synth2/ext/audio-ports.h"
 #include "synth2/ext/note-ports.h"
+#include "synth2/ext/params.h"
 #include "synth2/plugin/process-event.h"
 #include "synth2/plugin/render-audio.h"
 
@@ -127,6 +128,8 @@ synth2_plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
         return &synth2_plugin_audio_ports;
     } else if (strcmp(id, CLAP_EXT_NOTE_PORTS) == 0) {
         return &synth2_plugin_note_ports;
+    } else if (strcmp(id, CLAP_EXT_PARAMS) == 0) {
+        return &synth2_plugin_params;
     } else {
         return NULL;
     }

@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// TODO:
+/// Sometimes user will changes wave type while generating wave.
+/// It will better that oscillator can change wave type while generation it.
+
 #include "synth2/oscillator.h"
 
 #include <assert.h>

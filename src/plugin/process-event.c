@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// TODO:
+// This module is used by more than two file.
+// So, maybe this file need to be independent module.
+
 #include "synth2/plugin/process-event.h"
 
 #include "synth2/helper.h"
@@ -34,7 +38,7 @@ void synth2_plugin_process_event(
             voice->channel = note->channel;
             voice->key = note->key;
             synth2_oscillator_init(
-                &voice->osc, SYNTH2_OSC_METHOD_NAIVE, SYNTH2_OSC_WAVE_SINE,
+                &voice->osc, SYNTH2_OSC_METHOD_NAIVE, plugin->osc_wave,
                 plugin->sample_rate, k2f(note->key), 0.0
             );
             break;
@@ -51,5 +55,10 @@ void synth2_plugin_process_event(
             voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
             break;
         }
+    } else if (event->type == CLAP_EVENT_PARAM_VALUE) {
+        // TODO: Need mutex for changing parameters?
+        const clap_event_param_value_t *value = (clap_event_param_value_t *)event;
+        if (value->param_id > 0) return;
+        plugin->osc_wave = (synth2_oscillator_wave_t)value->value;
     }
 }
