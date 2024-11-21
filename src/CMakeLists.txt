@@ -1,17 +1,26 @@
-add_library(${PROJECT_NAME} MODULE
+add_library(synth2 MODULE
     entry.c
     ext/audio-ports.c
     ext/note-ports.c
+    ext/params.c
     factory/plugin-factory.c
+    helper.c
+    oscillator.c
     plugin.c
     plugin/process-event.c
     plugin/render-audio.c
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME} clap)
+# Collect libraries for target_link_libraries.
+list(APPEND SYNTH2_LINK_LIBRARIES clap)
+if (LINUX)
+    list(APPEND SYNTH2_LINK_LIBRARIES m)
+endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
+target_include_directories(synth2 PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(synth2 ${SYNTH2_LINK_LIBRARIES})
+
+set_target_properties(synth2 PROPERTIES
     PREFIX ""
     SUFFIX ".clap"
     C_STANDARD 17

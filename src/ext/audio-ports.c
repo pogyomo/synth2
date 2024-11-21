@@ -14,14 +14,14 @@
 
 #include "synth2/ext/audio-ports.h"
 
-#include <stdio.h>
+#include <string.h>
 
 static uint32_t
 synth2_plugin_audio_ports_count(const clap_plugin_t *plugin, bool is_input) {
     return is_input ? 0 : 1;
 }
 
-bool synth2_plugin_audio_ports_get(
+static bool synth2_plugin_audio_ports_get(
     const clap_plugin_t *plugin,
     uint32_t index,
     bool is_input,
@@ -30,7 +30,7 @@ bool synth2_plugin_audio_ports_get(
     if (is_input || index > 0) return false;
 
     info->id = 0;
-    snprintf(info->name, sizeof(info->name), "");
+    strncpy(info->name, "", sizeof(info->name));
     info->flags = CLAP_AUDIO_PORT_IS_MAIN;
     info->channel_count = 2;
     info->port_type = CLAP_PORT_STEREO;

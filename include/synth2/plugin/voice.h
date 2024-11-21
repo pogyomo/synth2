@@ -18,6 +18,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "synth2/oscillator.h"
+
 /// The state of synth2_plugin_voice_t.
 /// The state changes from top to bottom, then back to top.
 typedef enum synth2_plugin_voice_state {
@@ -41,6 +43,9 @@ typedef struct synth2_plugin_voice {
 
     /// The position of generation, in radian.
     float phase;
+
+    /// Oscillator for wave generation.
+    synth2_oscillator_t osc;
 
     // Derived from clap_event_note_t.
     int16_t note_id;

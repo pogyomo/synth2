@@ -14,8 +14,6 @@
 
 #include "synth2/plugin/render-audio.h"
 
-#include <math.h>
-
 void synth2_plugin_render_audio(
     synth2_plugin_t *plugin,
     uint32_t start,
@@ -28,10 +26,7 @@ void synth2_plugin_render_audio(
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
             synth2_plugin_voice_t *voice = &plugin->voices[i];
             if (voice->state == SYNTH2_PLUGIN_VOICE_HOLDING) {
-                output += sinf(voice->phase * 2.0f * 3.14159f) * 0.2f;
-                voice->phase +=
-                    440.0f * exp2f((voice->key - 57.0f) / 12.0f) / plugin->sample_rate;
-                voice->phase -= floorf(voice->phase);
+                output += voice->osc.sample(&voice->osc) * 0.2;
             } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
                 // TODO: It maybe good to add short decay for preventing clipping noise.
 
