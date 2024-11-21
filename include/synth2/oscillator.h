@@ -32,7 +32,7 @@ typedef struct synth2_oscillator {
 
 /// Initialize oscillator to generates specified wave.
 ///
-/// If type == SYNTH2_OSC_SQUARE, then duty must be specified and in [0.0, 1.0].
+/// If type == SYNTH2_OSC_SQUARE, then duty must be specified and in [0, 1].
 /// Otherwise, this parameter is just ignored.
 void synth2_oscillator_init(
     synth2_oscillator_t *osc,
