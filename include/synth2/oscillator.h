@@ -18,6 +18,9 @@ typedef struct synth2_oscillator {
     /// Sample rate to sample a point of wave.
     double sample_rate;
 
+    /// MIDI1 key number to generate wave.
+    double freq;
+
     /// Phase in wave. Must be in [0, 2π).
     double phase;
 
@@ -26,9 +29,6 @@ typedef struct synth2_oscillator {
 
     /// Previously sampled value.
     double prev;
-
-    /// MIDI1 key number to generate wave.
-    int16_t key;
 
     /// Sample a point of wave, then advance phase.
     double (*sample)(struct synth2_oscillator *osc);
@@ -43,7 +43,7 @@ void synth2_oscillator_init(
     synth2_oscillator_method_t method,
     synth2_oscillator_wave_t wave,
     double sample_rate,
-    int16_t key,
+    double freq,
     double duty
 );
 

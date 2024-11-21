@@ -14,6 +14,8 @@
 
 #include "synth2/plugin/process-event.h"
 
+#include "synth2/helper.h"
+
 void synth2_plugin_process_event(
     synth2_plugin_t *plugin,
     const clap_event_header_t *event
@@ -33,7 +35,7 @@ void synth2_plugin_process_event(
             voice->key = note->key;
             synth2_oscillator_init(
                 &voice->osc, SYNTH2_OSC_METHOD_NAIVE, SYNTH2_OSC_WAVE_SINE,
-                plugin->sample_rate, voice->key, 0.0
+                plugin->sample_rate, k2f(note->key), 0.0
             );
             break;
         }

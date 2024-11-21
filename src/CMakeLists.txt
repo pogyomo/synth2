@@ -3,6 +3,7 @@ add_library(synth2 MODULE
     ext/audio-ports.c
     ext/note-ports.c
     factory/plugin-factory.c
+    helper.c
     oscillator.c
     plugin.c
     plugin/process-event.c
