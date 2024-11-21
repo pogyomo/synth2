@@ -21,7 +21,7 @@ synth2_plugin_audio_ports_count(const clap_plugin_t *plugin, bool is_input) {
     return is_input ? 0 : 1;
 }
 
-bool synth2_plugin_audio_ports_get(
+static bool synth2_plugin_audio_ports_get(
     const clap_plugin_t *plugin,
     uint32_t index,
     bool is_input,
