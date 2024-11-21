@@ -106,8 +106,6 @@ void synth2_oscillator_init(
     double freq,
     double duty
 ) {
-    assert(method == SYNTH2_OSC_METHOD_NAIVE);
-
     osc->sample_rate = sample_rate;
     osc->freq = freq;
     osc->phase = 0.0;
