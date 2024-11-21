@@ -27,7 +27,8 @@ static inline double gen_sine_naive(double x, double prev, double duty) {
 
 /// Naive method for triangle wave generation.
 static inline double gen_triangle_naive(double x, double prev, double duty) {
-    return 0.0;
+    const double p = x / PI2 + 1.0 / 4.0;
+    return 4.0 * fabs(p - floor(p + 1.0 / 2.0)) - 1.0;
 }
 
 /// Naive method for sawtooth wave generation.
