@@ -23,6 +23,7 @@ typedef enum {
     SYNTH2_OSC_WAVE_SQUARE = 3,
 } synth2_osc_wave_t;
 
+/// Holds contexts for wave generation.
 typedef struct synth2_osc synth2_osc_t;
 
 /// Create new oscillator object with given parameters
