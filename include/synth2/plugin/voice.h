@@ -18,7 +18,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "synth2/oscillator.h"
+#include "synth2-osc/osc.h"
 
 /// The state of synth2_plugin_voice_t.
 /// The state changes from top to bottom, then back to top.
@@ -45,7 +45,7 @@ typedef struct synth2_plugin_voice {
     float phase;
 
     /// Oscillator for wave generation.
-    synth2_oscillator_t osc;
+    synth2_osc_t *osc;
 
     // Derived from clap_event_note_t.
     int16_t note_id;

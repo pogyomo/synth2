@@ -59,7 +59,7 @@ static bool synth2_plugin_params_value_to_text(
     char *out_buffer,
     uint32_t out_buffer_capacity
 ) {
-    synth2_oscillator_wave_t wave = (synth2_oscillator_wave_t)value;
+    synth2_osc_wave_t wave = (synth2_osc_wave_t)value;
     if (wave == SYNTH2_OSC_WAVE_SINE) {
         strncpy(out_buffer, "sine", out_buffer_capacity);
     } else if (wave == SYNTH2_OSC_WAVE_TRIANGLE) {
