@@ -98,9 +98,17 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
             }
         }
 
-        float *outoutL = process->audio_outputs[0].data32[0];
-        float *outoutR = process->audio_outputs[0].data32[1];
-        synth2_plugin_render_audio(plug, i, next_event_frame, outoutL, outoutR);
+        assert(process->audio_outputs[0].data32 || process->audio_outputs[0].data64);
+        if (process->audio_outputs[0].data32) {
+            float *outoutL = process->audio_outputs[0].data32[0];
+            float *outoutR = process->audio_outputs[0].data32[1];
+            synth2_plugin_render_audio_f(plug, i, next_event_frame, outoutL, outoutR);
+        } else {
+            double *outoutL = process->audio_outputs[0].data64[0];
+            double *outoutR = process->audio_outputs[0].data64[1];
+            synth2_plugin_render_audio_d(plug, i, next_event_frame, outoutL, outoutR);
+        }
+
         i = next_event_frame;
     }
 
