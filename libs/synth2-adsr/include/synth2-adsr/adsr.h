@@ -17,6 +17,14 @@
 
 #include <stdbool.h>
 
+typedef enum synth2_adsr_state {
+    SYNTH2_ADSR_STATE_A,
+    SYNTH2_ADSR_STATE_D,
+    SYNTH2_ADSR_STATE_S,
+    SYNTH2_ADSR_STATE_R,
+    SYNTH2_ADSR_STATE_STOP,
+} synth2_adsr_state_t;
+
 /// This object provides functional for generate [0, 1] normalized value
 /// changes through time.
 typedef struct synth2_adsr synth2_adsr_t;
@@ -25,6 +33,9 @@ typedef struct synth2_adsr synth2_adsr_t;
 /// a, d and r is in seconds, and s must be in [0, 1].
 synth2_adsr_t*
 synth2_adsr_create(double sample_rate, double a, double d, double s, double r);
+
+/// Returns current state of the adsr.
+synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr);
 
 /// Reset current state, restart from attack.
 void synth2_adsr_keyon(synth2_adsr_t* adsr);
@@ -36,27 +47,27 @@ void synth2_adsr_keyoff(synth2_adsr_t* adsr);
 double synth2_adsr_sample(synth2_adsr_t* adsr);
 
 /// Returns current attack time.
-void synth2_set_a(synth2_adsr_t* adsr, double a);
+void synth2_adsr_set_a(synth2_adsr_t* adsr, double a);
 
 /// Set attack time.
-double synth2_get_a(const synth2_adsr_t* adsr);
+double synth2_adsr_get_a(const synth2_adsr_t* adsr);
 
 /// Returns current decay time.
-void synth2_set_d(synth2_adsr_t* adsr, double d);
+void synth2_adsr_set_d(synth2_adsr_t* adsr, double d);
 
 /// Set decay time.
-double synth2_get_d(const synth2_adsr_t* adsr);
+double synth2_adsr_get_d(const synth2_adsr_t* adsr);
 
 /// Returns current sustain.
-void synth2_set_s(synth2_adsr_t* adsr, double s);
+void synth2_adsr_set_s(synth2_adsr_t* adsr, double s);
 
 /// Set sustain.
-double synth2_get_s(const synth2_adsr_t* adsr);
+double synth2_adsr_get_s(const synth2_adsr_t* adsr);
 
 /// Returns current release time.
-void synth2_set_r(synth2_adsr_t* adsr, double r);
+void synth2_adsr_set_r(synth2_adsr_t* adsr, double r);
 
 /// Set release time.
-double synth2_get_r(const synth2_adsr_t* adsr);
+double synth2_adsr_get_r(const synth2_adsr_t* adsr);
 
 #endif  // SYNTH2_ADSR_ADSR_H_

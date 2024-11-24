@@ -17,6 +17,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "synth2-adsr/adsr.h"
+
 static inline double clamp01(double value) {
     if (value < 0.0) {
         return 0.0;
@@ -33,7 +35,7 @@ static double process_a(synth2_adsr_t* adsr) {
     adsr->t += 1.0 / adsr->sample_rate;
     if (adsr->t >= adsr->a) {
         adsr->t = 0.0;
-        adsr->state = SYNTH2_ADSR_D;
+        adsr->state = SYNTH2_ADSR_STATE_D;
     }
     return adsr->prev;
 }
@@ -44,7 +46,7 @@ static double process_d(synth2_adsr_t* adsr) {
     adsr->t += 1.0 / adsr->sample_rate;
     if (adsr->t >= adsr->d) {
         adsr->t = 0.0;
-        adsr->state = SYNTH2_ADSR_S;
+        adsr->state = SYNTH2_ADSR_STATE_S;
     }
     return adsr->prev;
 }
@@ -72,65 +74,69 @@ synth2_adsr_create(double sample_rate, double a, double d, double s, double r) {
     adsr->r = r;
     adsr->t = 0.0;
     adsr->curr = adsr->prev = 0.0;
-    adsr->state = SYNTH2_ADSR_A;
+    adsr->state = SYNTH2_ADSR_STATE_A;
     return adsr;
+}
+
+synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr) {
+    return adsr->state;
 }
 
 void synth2_adsr_keyon(synth2_adsr_t* adsr) {
     adsr->t = 0.0;
     adsr->curr = adsr->prev = 0.0;
-    adsr->state = SYNTH2_ADSR_A;
+    adsr->state = SYNTH2_ADSR_STATE_A;
 }
 
 void synth2_adsr_keyoff(synth2_adsr_t* adsr) {
     adsr->t = 0.0;
-    adsr->state = SYNTH2_ADSR_R;
+    adsr->state = SYNTH2_ADSR_STATE_R;
 }
 
 double synth2_adsr_sample(synth2_adsr_t* adsr) {
     adsr->prev = adsr->curr;
     switch (adsr->state) {
-        case SYNTH2_ADSR_A:
+        case SYNTH2_ADSR_STATE_A:
             return process_a(adsr);
-        case SYNTH2_ADSR_D:
+        case SYNTH2_ADSR_STATE_D:
             return process_d(adsr);
-        case SYNTH2_ADSR_S:
+        case SYNTH2_ADSR_STATE_S:
             return process_s(adsr);
-        case SYNTH2_ADSR_R:
+        case SYNTH2_ADSR_STATE_R:
             return process_r(adsr);
         default:  // SYNTH2_ADSR_STOP
             return 0.0;
     }
 }
 
-void synth2_set_a(synth2_adsr_t* adsr, double a) {
+void synth2_adsr_set_a(synth2_adsr_t* adsr, double a) {
     adsr->a = a;
 }
 
-double synth2_get_a(const synth2_adsr_t* adsr) {
+double synth2_adsr_get_a(const synth2_adsr_t* adsr) {
     return adsr->a;
 }
 
-void synth2_set_d(synth2_adsr_t* adsr, double d) {
+void synth2_adsr_set_d(synth2_adsr_t* adsr, double d) {
     adsr->d = d;
 }
 
-double synth2_get_d(const synth2_adsr_t* adsr) {
+double synth2_adsr_get_d(const synth2_adsr_t* adsr) {
     return adsr->d;
 }
 
-void synth2_set_s(synth2_adsr_t* adsr, double s) {
+void synth2_adsr_set_s(synth2_adsr_t* adsr, double s) {
     adsr->s = s;
 }
 
-double synth2_get_s(const synth2_adsr_t* adsr) {
+double synth2_adsr_get_s(const synth2_adsr_t* adsr) {
     return adsr->s;
 }
 
-void synth2_set_r(synth2_adsr_t* adsr, double r) {
+void synth2_adsr_set_r(synth2_adsr_t* adsr, double r) {
     adsr->r = r;
 }
 
-double synth2_get_r(const synth2_adsr_t* adsr) {
+double synth2_adsr_get_r(const synth2_adsr_t* adsr) {
     return adsr->r;
 }

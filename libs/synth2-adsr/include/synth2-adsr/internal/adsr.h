@@ -17,14 +17,6 @@
 
 #include "synth2-adsr/adsr.h"
 
-typedef enum {
-    SYNTH2_ADSR_A,
-    SYNTH2_ADSR_D,
-    SYNTH2_ADSR_S,
-    SYNTH2_ADSR_R,
-    SYNTH2_ADSR_STOP,
-} synth2_adsr_state_t;
-
 struct synth2_adsr {
     double sample_rate;
     double a, d, s, r;
