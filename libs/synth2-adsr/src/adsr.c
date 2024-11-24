@@ -109,9 +109,9 @@ void synth2_adsr_init(
 
 void synth2_adsr_keyoff(synth2_adsr_t* adsr) {
     if (adsr->r < 1e-10) {
-        prepare_r(adsr);
-    } else {
         prepare_stop(adsr);
+    } else {
+        prepare_r(adsr);
     }
 }
 
