@@ -12,21 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "synth2-osc/internal/osc.h"
-
-#include <stdlib.h>
+#include "synth2-osc/osc.h"
 
 #include "synth2-osc/internal/macros.h"
 #include "synth2-osc/internal/wave-generator.h"
-#include "synth2-osc/osc.h"
-
-synth2_osc_t* synth2_osc_create(void) {
-    return calloc(1, sizeof(synth2_osc_t));
-}
-
-void synth2_osc_destroy(synth2_osc_t* osc) {
-    free(osc);
-}
 
 void synth2_osc_init(
     synth2_osc_t* osc,

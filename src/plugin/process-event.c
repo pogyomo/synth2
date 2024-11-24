@@ -38,10 +38,12 @@ void synth2_plugin_process_event(
             voice->note_id = note->note_id;
             voice->channel = note->channel;
             voice->key = note->key;
+
             synth2_osc_init(
-                voice->osc, plugin->osc_wave, plugin->sample_rate, k2f(note->key), 1.0
+                &voice->osc, plugin->osc_wave, plugin->sample_rate, k2f(note->key), 1.0
             );
-            synth2_adsr_init(voice->vol, plugin->sample_rate, 0.01, 0.5, 0.5, 0.01);
+            synth2_adsr_init(&voice->vol, plugin->sample_rate, 0.01, 0.5, 0.5, 0.01);
+
             break;
         }
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
@@ -54,7 +56,7 @@ void synth2_plugin_process_event(
             if (note->channel != -1 && voice->channel != note->channel) continue;
 
             voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
-            synth2_adsr_keyoff(voice->vol);
+            synth2_adsr_keyoff(&voice->vol);
             break;
         }
     } else if (event->type == CLAP_EVENT_PARAM_VALUE) {
