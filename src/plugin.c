@@ -118,6 +118,7 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
             process->out_events->try_push(process->out_events, &event.header);
             voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
             synth2_osc_destroy(voice->osc);
+            synth2_adsr_destroy(voice->adsr_vol);
             voice->osc = NULL;
         };
     }
