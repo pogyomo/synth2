@@ -28,11 +28,13 @@
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
     synth2_params_init_default(&plug->params);
-    synth2_params_init_default(&plug->params);
+
+    plug->next_voice_id = 0;
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_plugin_voice_t *voice = &plug->voices[i];
         voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
     }
+
     return true;
 }
 

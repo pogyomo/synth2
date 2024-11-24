@@ -34,6 +34,7 @@ typedef struct synth2_plugin {
     synth2_params_t params;
 
     /// Voices to be used to render audio.
+    synth2_plugin_voice_id_t next_voice_id;
     synth2_plugin_voice_t voices[SYNTH2_PLUGIN_MAX_VOICES];
 } synth2_plugin_t;
 

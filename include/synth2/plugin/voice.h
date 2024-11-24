@@ -21,6 +21,8 @@
 #include "synth2-adsr/adsr.h"
 #include "synth2-osc/osc.h"
 
+typedef uint64_t synth2_plugin_voice_id_t;
+
 /// The state of synth2_plugin_voice_t.
 /// The state changes from top to bottom, then back to top.
 typedef enum synth2_plugin_voice_state {
@@ -41,6 +43,10 @@ typedef enum synth2_plugin_voice_state {
 typedef struct synth2_plugin_voice {
     /// Current state of this voice.
     synth2_plugin_voice_state_t state;
+
+    /// When this voice lastly used.
+    /// Voice with smaller id is older.
+    synth2_plugin_voice_id_t id;
 
     /// Objects for wave generation.
     synth2_osc_t osc1;
