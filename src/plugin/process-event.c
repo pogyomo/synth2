@@ -24,11 +24,11 @@
 #include "synth2/params.h"
 
 static inline double convert_amp_a(const synth2_params_amp_t *amp) {
-    return ((double)amp->a / 128.0) * 2.0;
+    return ((double)amp->a / 128.0) * 2.0 + 0.001;
 }
 
 static inline double convert_amp_d(const synth2_params_amp_t *amp) {
-    return ((double)amp->d / 128.0) * 2.0;
+    return ((double)amp->d / 128.0) * 2.0 + 0.001;
 }
 
 static inline double convert_amp_s(const synth2_params_amp_t *amp) {
@@ -36,7 +36,7 @@ static inline double convert_amp_s(const synth2_params_amp_t *amp) {
 }
 
 static inline double convert_amp_r(const synth2_params_amp_t *amp) {
-    return ((double)amp->r / 128.0) * 2.0;
+    return ((double)amp->r / 128.0) * 2.0 + 0.001;
 }
 
 static void init_voice(
