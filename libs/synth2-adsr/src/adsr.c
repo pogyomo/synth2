@@ -59,6 +59,10 @@ static double process_r(synth2_adsr_t* adsr) {
     const double d = adsr->prev / (adsr->r - adsr->t);
     adsr->curr = clamp01(adsr->prev - d / adsr->sample_rate);
     adsr->t += 1.0 / adsr->sample_rate;
+    if (adsr->t >= adsr->r) {
+        adsr->t = 0.0;
+        adsr->state = SYNTH2_ADSR_STATE_STOP;
+    }
     return adsr->prev;
 }
 
