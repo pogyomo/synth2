@@ -30,7 +30,7 @@ typedef enum synth2_adsr_state {
 typedef struct synth2_adsr {
     double sample_rate;
     double a, d, s, r;
-    double t, curr, prev;
+    double t, dt, curr;
     synth2_adsr_state_t state;
 } synth2_adsr_t;
 
