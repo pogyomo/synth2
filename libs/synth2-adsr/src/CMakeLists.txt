@@ -3,9 +3,7 @@ if(BUILD_SHARED_LIBS)
 else()
     message(STATUS "Build static synth2-adsr")
 endif()
-add_library(synth2-adsr
-    adsr.c
-)
+add_library(synth2-adsr adsr.c)
 
 # Collect libraries for target_link_libraries.
 if (LINUX)
