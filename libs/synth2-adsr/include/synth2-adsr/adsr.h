@@ -34,6 +34,9 @@ typedef struct synth2_adsr synth2_adsr_t;
 synth2_adsr_t*
 synth2_adsr_create(double sample_rate, double a, double d, double s, double r);
 
+/// Freed allocated memory for this adsr.
+void synth2_adsr_destroy(synth2_adsr_t* adsr);
+
 /// Returns current state of the adsr.
 synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr);
 

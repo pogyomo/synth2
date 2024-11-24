@@ -78,6 +78,10 @@ synth2_adsr_create(double sample_rate, double a, double d, double s, double r) {
     return adsr;
 }
 
+void synth2_adsr_destroy(synth2_adsr_t* adsr) {
+    free(adsr);
+}
+
 synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr) {
     return adsr->state;
 }
