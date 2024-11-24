@@ -12,12 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "synth2-adsr/internal/adsr.h"
+#include "synth2-adsr/adsr.h"
 
 #include <assert.h>
-#include <stdlib.h>
-
-#include "synth2-adsr/adsr.h"
 
 static inline double clamp01(double value) {
     if (value < 0.0) {
@@ -64,14 +61,6 @@ static double process_r(synth2_adsr_t* adsr) {
         adsr->state = SYNTH2_ADSR_STATE_STOP;
     }
     return adsr->prev;
-}
-
-synth2_adsr_t* synth2_adsr_create(void) {
-    return calloc(1, sizeof(synth2_adsr_t));
-}
-
-void synth2_adsr_destroy(synth2_adsr_t* adsr) {
-    free(adsr);
 }
 
 void synth2_adsr_init(

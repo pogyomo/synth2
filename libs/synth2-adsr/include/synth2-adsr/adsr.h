@@ -27,13 +27,12 @@ typedef enum synth2_adsr_state {
 
 /// This object provides functional for generate [0, 1] normalized value
 /// changes through time.
-typedef struct synth2_adsr synth2_adsr_t;
-
-/// Create a new synth2_adsr_t object, return pointer to it.
-synth2_adsr_t* synth2_adsr_create(void);
-
-/// Freed allocated memory for this adsr.
-void synth2_adsr_destroy(synth2_adsr_t* adsr);
+typedef struct synth2_adsr {
+    double sample_rate;
+    double a, d, s, r;
+    double t, curr, prev;
+    synth2_adsr_state_t state;
+} synth2_adsr_t;
 
 /// Initialize this ADSR with given parameters.
 /// a, d and r is in seconds, and s must be in [0, 1].
