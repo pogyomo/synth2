@@ -68,6 +68,22 @@ static void init_voice(
     synth2_adsr_init(&voice->amp, plugin->sample_rate, amp_a, amp_d, amp_s, amp_r);
 }
 
+/// Find unused voice, or oldest voice if all voice used.
+static size_t find_useable_voice_idx(synth2_plugin_voice_t *voices) {
+    synth2_plugin_voice_id_t min_id = UINT64_MAX;
+    size_t min_idx;
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        if (voices[i].id < min_id) {
+            min_id = voices[i].id;
+            min_idx = i;
+        }
+        if (voices[i].state == SYNTH2_PLUGIN_VOICE_UNUSED) {
+            return i;
+        }
+    }
+    return min_idx;
+}
+
 void synth2_plugin_process_event(
     synth2_plugin_t *plugin,
     const clap_event_header_t *event
@@ -76,17 +92,15 @@ void synth2_plugin_process_event(
 
     if (event->type == CLAP_EVENT_NOTE_ON) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
-        for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-            synth2_plugin_voice_t *voice = &plugin->voices[i];
-            if (voice->state != SYNTH2_PLUGIN_VOICE_UNUSED) continue;
 
-            voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
-            voice->note_id = note->note_id;
-            voice->channel = note->channel;
-            voice->key = note->key;
-            init_voice(voice, plugin, note);
-            break;
-        }
+        size_t voice_idx = find_useable_voice_idx(plugin->voices);
+        synth2_plugin_voice_t *voice = &plugin->voices[voice_idx];
+        voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
+        voice->note_id = note->note_id;
+        voice->channel = note->channel;
+        voice->key = note->key;
+        voice->id = plugin->next_voice_id++;
+        init_voice(voice, plugin, note);
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
