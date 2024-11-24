@@ -5,6 +5,7 @@ add_library(synth2 MODULE
     ext/params.c
     factory/plugin-factory.c
     helper.c
+    params.c
     plugin.c
     plugin/process-event.c
     plugin/render-audio.c

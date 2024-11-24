@@ -43,8 +43,9 @@ typedef struct synth2_plugin_voice {
     synth2_plugin_voice_state_t state;
 
     /// Objects for wave generation.
-    synth2_osc_t osc;
-    synth2_adsr_t vol;
+    synth2_osc_t osc1;
+    synth2_osc_t osc2;
+    synth2_adsr_t amp;
 
     // Derived from clap_event_note_t.
     int16_t note_id;

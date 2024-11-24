@@ -14,14 +14,13 @@
 
 #include "synth2/ext/params.h"
 
-#include <string.h>
-
 #include "clap/events.h"
+#include "synth2/params.h"
 #include "synth2/plugin.h"
 #include "synth2/plugin/process-event.h"
 
 static uint32_t synth2_plugin_params_count(const clap_plugin_t *plugin) {
-    return 1;
+    return SYNTH2_NUM_PARAMS;
 }
 
 static bool synth2_plugin_params_get_info(
@@ -29,16 +28,8 @@ static bool synth2_plugin_params_get_info(
     uint32_t index,
     clap_param_info_t *info
 ) {
-    if (index > 0) return false;
-    info->id = 0;
-    info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
-    info->cookie = NULL;
-    strncpy(info->name, "Wave", sizeof(info->name));
-    strncpy(info->module, "Oscillator", sizeof(info->module));
-    info->min_value = 0;
-    info->max_value = 3;
-    info->default_value = 0;
-    return true;
+    const synth2_plugin_t *plug = plugin->plugin_data;
+    return synth2_params_get_info(&plug->params, index, info);
 }
 
 static bool synth2_plugin_params_get_value(
@@ -47,9 +38,7 @@ static bool synth2_plugin_params_get_value(
     double *out_value
 ) {
     const synth2_plugin_t *plug = plugin->plugin_data;
-    if (param_id > 0) return false;
-    *out_value = (double)plug->osc_wave;
-    return true;
+    return synth2_params_get_value(&plug->params, param_id, out_value);
 }
 
 static bool synth2_plugin_params_value_to_text(
@@ -59,17 +48,10 @@ static bool synth2_plugin_params_value_to_text(
     char *out_buffer,
     uint32_t out_buffer_capacity
 ) {
-    synth2_osc_wave_t wave = (synth2_osc_wave_t)value;
-    if (wave == SYNTH2_OSC_WAVE_SINE) {
-        strncpy(out_buffer, "sine", out_buffer_capacity);
-    } else if (wave == SYNTH2_OSC_WAVE_TRIANGLE) {
-        strncpy(out_buffer, "triangle", out_buffer_capacity);
-    } else if (wave == SYNTH2_OSC_WAVE_SAW) {
-        strncpy(out_buffer, "saw", out_buffer_capacity);
-    } else {
-        strncpy(out_buffer, "square", out_buffer_capacity);
-    }
-    return true;
+    const synth2_plugin_t *plug = plugin->plugin_data;
+    return synth2_params_value_to_text(
+        &plug->params, param_id, value, out_buffer, out_buffer_capacity
+    );
 }
 
 static bool synth2_plugin_params_text_to_value(
@@ -78,7 +60,10 @@ static bool synth2_plugin_params_text_to_value(
     const char *param_value_text,
     double *out_value
 ) {
-    return false;
+    const synth2_plugin_t *plug = plugin->plugin_data;
+    return synth2_params_text_to_value(
+        &plug->params, param_id, param_value_text, out_value
+    );
 }
 
 static void synth2_plugin_params_flush(
