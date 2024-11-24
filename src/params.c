@@ -28,9 +28,6 @@ bool synth2_params_get_info(
     uint32_t param_index,
     clap_param_info_t *info
 ) {
-    // TODO:
-    // Thought CLAP_PARAM_IS_STEPPED is good for integer-only parameters, but gui
-    // uses list instead of slider.
     switch ((synth2_param_id_t)param_index) {
         case SYNTH2_PARAM_ID_OSC1_WAVE:
             info->id = param_index;
