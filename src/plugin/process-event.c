@@ -37,9 +37,8 @@ void synth2_plugin_process_event(
             voice->note_id = note->note_id;
             voice->channel = note->channel;
             voice->key = note->key;
-            synth2_oscillator_init(
-                &voice->osc, SYNTH2_OSC_METHOD_NAIVE, plugin->osc_wave,
-                plugin->sample_rate, k2f(note->key), 0.0
+            voice->osc = synth2_osc_create(
+                plugin->osc_wave, plugin->sample_rate, k2f(note->key), 1.0
             );
             break;
         }
@@ -59,6 +58,6 @@ void synth2_plugin_process_event(
         // TODO: Need mutex for changing parameters?
         const clap_event_param_value_t *value = (clap_event_param_value_t *)event;
         if (value->param_id > 0) return;
-        plugin->osc_wave = (synth2_oscillator_wave_t)value->value;
+        plugin->osc_wave = (synth2_osc_wave_t)value->value;
     }
 }

@@ -26,7 +26,7 @@ void synth2_plugin_render_audio(
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
             synth2_plugin_voice_t *voice = &plugin->voices[i];
             if (voice->state == SYNTH2_PLUGIN_VOICE_HOLDING) {
-                output += voice->osc.sample(&voice->osc) * 0.2;
+                output += synth2_osc_sample(voice->osc) * 0.2;
             } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
                 // TODO: It maybe good to add short decay for preventing clipping noise.
 

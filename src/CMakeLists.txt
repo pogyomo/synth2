@@ -5,14 +5,13 @@ add_library(synth2 MODULE
     ext/params.c
     factory/plugin-factory.c
     helper.c
-    oscillator.c
     plugin.c
     plugin/process-event.c
     plugin/render-audio.c
 )
 
 # Collect libraries for target_link_libraries.
-list(APPEND SYNTH2_LINK_LIBRARIES clap)
+list(APPEND SYNTH2_LINK_LIBRARIES clap synth2-osc)
 if (LINUX)
     list(APPEND SYNTH2_LINK_LIBRARIES m)
 endif()

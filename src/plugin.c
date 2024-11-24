@@ -30,6 +30,7 @@ static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         plug->voices[i].state = SYNTH2_PLUGIN_VOICE_UNUSED;
     }
+    plug->osc_wave = SYNTH2_OSC_WAVE_SINE;
     return true;
 }
 
@@ -116,6 +117,8 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
             event.port_index = 0;
             process->out_events->try_push(process->out_events, &event.header);
             voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
+            synth2_osc_destroy(voice->osc);
+            voice->osc = NULL;
         };
     }
 

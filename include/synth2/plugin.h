@@ -17,7 +17,7 @@
 
 #include <clap/plugin.h>
 
-#include "synth2/oscillator.h"
+#include "synth2-osc/osc.h"
 #include "synth2/plugin/voice.h"
 
 #define SYNTH2_PLUGIN_MAX_VOICES 32
@@ -30,7 +30,7 @@ typedef struct synth2_plugin {
     double sample_rate;
 
     /// What wave to generate.
-    synth2_oscillator_wave_t osc_wave;
+    synth2_osc_wave_t osc_wave;
 
     /// Voices to be used to render audio.
     synth2_plugin_voice_t voices[SYNTH2_PLUGIN_MAX_VOICES];
