@@ -17,12 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 
-static inline synth2_param_id_t index_to_param_id(uint32_t param_index) {
-    /// Currently parameter id is start from 0, and is continuous, so just return the
-    /// index.
-    return param_index;
-}
-
 bool synth2_params_get_info(
     const synth2_params_t *params,
     uint32_t param_index,
