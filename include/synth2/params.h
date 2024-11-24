@@ -66,11 +66,9 @@ typedef struct synth2_params {
     synth2_params_amp_t amp;
 } synth2_params_t;
 
-bool synth2_params_get_info(
-    const synth2_params_t *params,
-    uint32_t param_index,
-    clap_param_info_t *info
-);
+void synth2_params_init_default(synth2_params_t *params);
+
+bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info);
 
 bool synth2_params_get_value(
     const synth2_params_t *params,
@@ -79,7 +77,6 @@ bool synth2_params_get_value(
 );
 
 bool synth2_params_value_to_text(
-    const synth2_params_t *params,
     synth2_param_id_t param_id,
     double value,
     char *out_buffer,
@@ -87,7 +84,6 @@ bool synth2_params_value_to_text(
 );
 
 bool synth2_params_text_to_value(
-    const synth2_params_t *params,
     synth2_param_id_t param_id,
     const char *param_value_text,
     double *out_value

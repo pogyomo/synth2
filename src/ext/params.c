@@ -28,8 +28,7 @@ static bool synth2_plugin_params_get_info(
     uint32_t index,
     clap_param_info_t *info
 ) {
-    const synth2_plugin_t *plug = plugin->plugin_data;
-    return synth2_params_get_info(&plug->params, index, info);
+    return synth2_params_get_info(index, info);
 }
 
 static bool synth2_plugin_params_get_value(
@@ -48,10 +47,7 @@ static bool synth2_plugin_params_value_to_text(
     char *out_buffer,
     uint32_t out_buffer_capacity
 ) {
-    const synth2_plugin_t *plug = plugin->plugin_data;
-    return synth2_params_value_to_text(
-        &plug->params, param_id, value, out_buffer, out_buffer_capacity
-    );
+    return synth2_params_value_to_text(param_id, value, out_buffer, out_buffer_capacity);
 }
 
 static bool synth2_plugin_params_text_to_value(
@@ -60,10 +56,7 @@ static bool synth2_plugin_params_text_to_value(
     const char *param_value_text,
     double *out_value
 ) {
-    const synth2_plugin_t *plug = plugin->plugin_data;
-    return synth2_params_text_to_value(
-        &plug->params, param_id, param_value_text, out_value
-    );
+    return synth2_params_text_to_value(param_id, param_value_text, out_value);
 }
 
 static void synth2_plugin_params_flush(
