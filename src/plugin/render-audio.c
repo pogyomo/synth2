@@ -14,6 +14,8 @@
 
 #include "synth2/plugin/render-audio.h"
 
+#include "synth2-adsr/adsr.h"
+
 void synth2_plugin_render_audio(
     synth2_plugin_t *plugin,
     uint32_t start,
@@ -26,12 +28,15 @@ void synth2_plugin_render_audio(
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
             synth2_plugin_voice_t *voice = &plugin->voices[i];
             if (voice->state == SYNTH2_PLUGIN_VOICE_HOLDING) {
-                output += synth2_osc_sample(voice->osc) * 0.2;
+                output += synth2_osc_sample(voice->osc) *
+                          synth2_adsr_sample(voice->adsr_vol) * 0.2;
             } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
-                // TODO: It maybe good to add short decay for preventing clipping noise.
-
-                // Currently we immediately stops sound and goto post process.
-                voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
+                output += synth2_osc_sample(voice->osc) *
+                          synth2_adsr_sample(voice->adsr_vol) * 0.2;
+                synth2_adsr_state_t state = synth2_adsr_current_state(voice->adsr_vol);
+                if (state == SYNTH2_ADSR_STATE_STOP) {
+                    voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
+                }
             }
         }
         outputL[i] = outputR[i] = output;

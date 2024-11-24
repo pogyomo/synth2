@@ -11,7 +11,7 @@ add_library(synth2 MODULE
 )
 
 # Collect libraries for target_link_libraries.
-list(APPEND SYNTH2_LINK_LIBRARIES clap synth2-osc)
+list(APPEND SYNTH2_LINK_LIBRARIES clap synth2-osc synth2-adsr)
 if (LINUX)
     list(APPEND SYNTH2_LINK_LIBRARIES m)
 endif()

@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "synth2-adsr/adsr.h"
 #include "synth2-osc/osc.h"
 
 /// The state of synth2_plugin_voice_t.
@@ -46,6 +47,9 @@ typedef struct synth2_plugin_voice {
 
     /// Oscillator for wave generation.
     synth2_osc_t *osc;
+
+    /// ADSR for volume.
+    synth2_adsr_t *adsr_vol;
 
     // Derived from clap_event_note_t.
     int16_t note_id;
