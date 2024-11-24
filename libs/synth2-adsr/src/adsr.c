@@ -66,11 +66,23 @@ static double process_r(synth2_adsr_t* adsr) {
     return adsr->prev;
 }
 
-synth2_adsr_t*
-synth2_adsr_create(double sample_rate, double a, double d, double s, double r) {
+synth2_adsr_t* synth2_adsr_create(void) {
+    return calloc(1, sizeof(synth2_adsr_t));
+}
+
+void synth2_adsr_destroy(synth2_adsr_t* adsr) {
+    free(adsr);
+}
+
+void synth2_adsr_init(
+    synth2_adsr_t* adsr,
+    double sample_rate,
+    double a,
+    double d,
+    double s,
+    double r
+) {
     assert(0.0 <= s && s <= 1.0);
-    synth2_adsr_t* adsr = calloc(1, sizeof(synth2_adsr_t));
-    if (!adsr) return NULL;
     adsr->sample_rate = sample_rate;
     adsr->a = a;
     adsr->d = d;
@@ -79,21 +91,10 @@ synth2_adsr_create(double sample_rate, double a, double d, double s, double r) {
     adsr->t = 0.0;
     adsr->curr = adsr->prev = 0.0;
     adsr->state = SYNTH2_ADSR_STATE_A;
-    return adsr;
-}
-
-void synth2_adsr_destroy(synth2_adsr_t* adsr) {
-    free(adsr);
 }
 
 synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr) {
     return adsr->state;
-}
-
-void synth2_adsr_keyon(synth2_adsr_t* adsr) {
-    adsr->t = 0.0;
-    adsr->curr = adsr->prev = 0.0;
-    adsr->state = SYNTH2_ADSR_STATE_A;
 }
 
 void synth2_adsr_keyoff(synth2_adsr_t* adsr) {

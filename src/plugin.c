@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "synth2-osc/osc.h"
 #include "synth2/ext/audio-ports.h"
 #include "synth2/ext/note-ports.h"
 #include "synth2/ext/params.h"
@@ -27,15 +28,24 @@
 
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
-    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-        plug->voices[i].state = SYNTH2_PLUGIN_VOICE_UNUSED;
-    }
     plug->osc_wave = SYNTH2_OSC_WAVE_SINE;
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        synth2_plugin_voice_t *voice = &plug->voices[i];
+        voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
+        voice->osc = synth2_osc_create();
+        voice->vol = synth2_adsr_create();
+        if (voice->osc == NULL || voice->vol == NULL) return false;
+    }
     return true;
 }
 
 static void synth2_plugin_destroy(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        synth2_plugin_voice_t *voice = &plug->voices[i];
+        synth2_osc_destroy(voice->osc);
+        synth2_adsr_destroy(voice->vol);
+    }
     free(plug);
 }
 
@@ -117,9 +127,6 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
             event.port_index = 0;
             process->out_events->try_push(process->out_events, &event.header);
             voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
-            synth2_osc_destroy(voice->osc);
-            synth2_adsr_destroy(voice->adsr_vol);
-            voice->osc = NULL;
         };
     }
 
@@ -182,6 +189,12 @@ const clap_plugin_t *synth2_plugin_create(const clap_host_t *host) {
     plugin->plugin.process = synth2_plugin_process;
     plugin->plugin.get_extension = synth2_plugin_get_extension;
     plugin->plugin.on_main_thread = synth2_plugin_on_main_thread;
+
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        synth2_plugin_voice_t *voice = &plugin->voices[i];
+        voice->osc = NULL;
+        voice->vol = NULL;
+    }
 
     return &plugin->plugin;
 }
