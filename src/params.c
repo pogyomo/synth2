@@ -32,7 +32,7 @@ bool synth2_params_get_info(
     // Thought CLAP_PARAM_IS_STEPPED is good for integer-only parameters, but gui
     // uses list instead of slider.
     switch ((synth2_param_id_t)param_index) {
-        case SYNTH2_PARAM_ID_OSC1_WAVE: {
+        case SYNTH2_PARAM_ID_OSC1_WAVE:
             info->id = param_index;
             info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
             strncpy(info->name, "Wave", sizeof(info->name));
@@ -41,8 +41,7 @@ bool synth2_params_get_info(
             info->max_value = SYNTH2_OSC_WAVE_SQUARE;
             info->default_value = SYNTH2_OSC_WAVE_SINE;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC1_DUTY: {
+        case SYNTH2_PARAM_ID_OSC1_DUTY:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "Duty", sizeof(info->name));
@@ -51,8 +50,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 128;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_WAVE: {
+        case SYNTH2_PARAM_ID_OSC2_WAVE:
             info->id = param_index;
             info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
             strncpy(info->name, "Wave", sizeof(info->name));
@@ -61,8 +59,7 @@ bool synth2_params_get_info(
             info->max_value = SYNTH2_OSC_WAVE_SQUARE;
             info->default_value = SYNTH2_OSC_WAVE_SINE;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_DUTY: {
+        case SYNTH2_PARAM_ID_OSC2_DUTY:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "Duty", sizeof(info->name));
@@ -71,8 +68,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 128;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_PITCH: {
+        case SYNTH2_PARAM_ID_OSC2_PITCH:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "Pitch", sizeof(info->name));
@@ -81,8 +77,7 @@ bool synth2_params_get_info(
             info->max_value = 12;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_CENT: {
+        case SYNTH2_PARAM_ID_OSC2_CENT:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "Cent", sizeof(info->name));
@@ -91,8 +86,7 @@ bool synth2_params_get_info(
             info->max_value = 64;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSCS_MIX: {
+        case SYNTH2_PARAM_ID_OSCS_MIX:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "Mix", sizeof(info->name));
@@ -101,8 +95,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_A: {
+        case SYNTH2_PARAM_ID_AMP_A:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "A", sizeof(info->name));
@@ -111,8 +104,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_D: {
+        case SYNTH2_PARAM_ID_AMP_D:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "D", sizeof(info->name));
@@ -121,8 +113,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_S: {
+        case SYNTH2_PARAM_ID_AMP_S:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "S", sizeof(info->name));
@@ -131,8 +122,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_R: {
+        case SYNTH2_PARAM_ID_AMP_R:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "R", sizeof(info->name));
@@ -141,8 +131,7 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 0;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_GAIN: {
+        case SYNTH2_PARAM_ID_AMP_GAIN:
             info->id = param_index;
             info->flags = 0;
             strncpy(info->name, "Gain", sizeof(info->name));
@@ -151,7 +140,6 @@ bool synth2_params_get_info(
             info->max_value = 128;
             info->default_value = 0;
             return true;
-        }
         default:
             return false;
     }
@@ -163,54 +151,42 @@ bool synth2_params_get_value(
     double *out_value
 ) {
     switch (param_id) {
-        case SYNTH2_PARAM_ID_OSC1_WAVE: {
+        case SYNTH2_PARAM_ID_OSC1_WAVE:
             *out_value = params->osc1.wave;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC1_DUTY: {
+        case SYNTH2_PARAM_ID_OSC1_DUTY:
             *out_value = params->osc1.duty;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_WAVE: {
+        case SYNTH2_PARAM_ID_OSC2_WAVE:
             *out_value = params->osc2.wave;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_DUTY: {
+        case SYNTH2_PARAM_ID_OSC2_DUTY:
             *out_value = params->osc2.duty;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_PITCH: {
+        case SYNTH2_PARAM_ID_OSC2_PITCH:
             *out_value = params->osc2.pitch;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_CENT: {
+        case SYNTH2_PARAM_ID_OSC2_CENT:
             *out_value = params->osc2.cent;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSCS_MIX: {
+        case SYNTH2_PARAM_ID_OSCS_MIX:
             *out_value = params->oscs.mix;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_A: {
+        case SYNTH2_PARAM_ID_AMP_A:
             *out_value = params->amp.a;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_D: {
+        case SYNTH2_PARAM_ID_AMP_D:
             *out_value = params->amp.d;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_S: {
+        case SYNTH2_PARAM_ID_AMP_S:
             *out_value = params->amp.s;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_R: {
+        case SYNTH2_PARAM_ID_AMP_R:
             *out_value = params->amp.r;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_GAIN: {
+        case SYNTH2_PARAM_ID_AMP_GAIN:
             *out_value = params->amp.gain;
             return true;
-        }
         default:
             return false;
     }
@@ -225,7 +201,7 @@ bool synth2_params_value_to_text(
 ) {
     switch (param_id) {
         case SYNTH2_PARAM_ID_OSC1_WAVE:
-        case SYNTH2_PARAM_ID_OSC2_WAVE: {
+        case SYNTH2_PARAM_ID_OSC2_WAVE:
             switch ((synth2_osc_wave_t)value) {
                 case SYNTH2_OSC_WAVE_SINE:
                     strncpy(out_buffer, "Sine", out_buffer_capacity);
@@ -240,7 +216,6 @@ bool synth2_params_value_to_text(
                     strncpy(out_buffer, "Square", out_buffer_capacity);
                     return true;
             }
-        }
         case SYNTH2_PARAM_ID_OSC1_DUTY:
         case SYNTH2_PARAM_ID_OSC2_DUTY:
         case SYNTH2_PARAM_ID_OSC2_PITCH:
@@ -250,10 +225,9 @@ bool synth2_params_value_to_text(
         case SYNTH2_PARAM_ID_AMP_D:
         case SYNTH2_PARAM_ID_AMP_S:
         case SYNTH2_PARAM_ID_AMP_R:
-        case SYNTH2_PARAM_ID_AMP_GAIN: {
+        case SYNTH2_PARAM_ID_AMP_GAIN:
             snprintf(out_buffer, out_buffer_capacity, "%d", (int)value);
             return true;
-        }
         default:
             return false;
     }
@@ -266,22 +240,6 @@ bool synth2_params_text_to_value(
     double *out_value
 ) {
     return false;
-    switch (param_id) {
-        case SYNTH2_PARAM_ID_OSC1_WAVE:
-        case SYNTH2_PARAM_ID_OSC1_DUTY:
-        case SYNTH2_PARAM_ID_OSC2_WAVE:
-        case SYNTH2_PARAM_ID_OSC2_DUTY:
-        case SYNTH2_PARAM_ID_OSC2_PITCH:
-        case SYNTH2_PARAM_ID_OSC2_CENT:
-        case SYNTH2_PARAM_ID_OSCS_MIX:
-        case SYNTH2_PARAM_ID_AMP_A:
-        case SYNTH2_PARAM_ID_AMP_D:
-        case SYNTH2_PARAM_ID_AMP_S:
-        case SYNTH2_PARAM_ID_AMP_R:
-        case SYNTH2_PARAM_ID_AMP_GAIN:
-        default:
-            return false;
-    }
 }
 
 bool synth2_params_update(
@@ -290,54 +248,42 @@ bool synth2_params_update(
     double value
 ) {
     switch (param_id) {
-        case SYNTH2_PARAM_ID_OSC1_WAVE: {
+        case SYNTH2_PARAM_ID_OSC1_WAVE:
             params->osc1.wave = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC1_DUTY: {
+        case SYNTH2_PARAM_ID_OSC1_DUTY:
             params->osc1.duty = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_WAVE: {
+        case SYNTH2_PARAM_ID_OSC2_WAVE:
             params->osc2.wave = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_DUTY: {
+        case SYNTH2_PARAM_ID_OSC2_DUTY:
             params->osc2.duty = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_PITCH: {
+        case SYNTH2_PARAM_ID_OSC2_PITCH:
             params->osc2.pitch = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSC2_CENT: {
+        case SYNTH2_PARAM_ID_OSC2_CENT:
             params->osc2.cent = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_OSCS_MIX: {
+        case SYNTH2_PARAM_ID_OSCS_MIX:
             params->oscs.mix = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_A: {
+        case SYNTH2_PARAM_ID_AMP_A:
             params->amp.a = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_D: {
+        case SYNTH2_PARAM_ID_AMP_D:
             params->amp.d = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_S: {
+        case SYNTH2_PARAM_ID_AMP_S:
             params->amp.s = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_R: {
+        case SYNTH2_PARAM_ID_AMP_R:
             params->amp.r = value;
             return true;
-        }
-        case SYNTH2_PARAM_ID_AMP_GAIN: {
+        case SYNTH2_PARAM_ID_AMP_GAIN:
             params->amp.gain = value;
             return true;
-        }
         default:
             return false;
     }
