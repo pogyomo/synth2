@@ -31,7 +31,8 @@ static bool synth2_plugin_audio_ports_get(
 
     info->id = 0;
     strncpy(info->name, "", sizeof(info->name));
-    info->flags = CLAP_AUDIO_PORT_IS_MAIN;
+    info->flags = CLAP_AUDIO_PORT_IS_MAIN | CLAP_AUDIO_PORT_SUPPORTS_64BITS |
+                  CLAP_AUDIO_PORT_PREFERS_64BITS;
     info->channel_count = 2;
     info->port_type = CLAP_PORT_STEREO;
     info->in_place_pair = CLAP_INVALID_ID;

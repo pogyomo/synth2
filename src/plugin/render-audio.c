@@ -16,7 +16,27 @@
 
 #include "synth2-adsr/adsr.h"
 
-void synth2_plugin_render_audio(
+static double render_audio(synth2_plugin_t *plugin) {
+    double output = 0.0f;
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        synth2_plugin_voice_t *voice = &plugin->voices[i];
+        if (voice->state == SYNTH2_PLUGIN_VOICE_HOLDING) {
+            const double vol_coef = synth2_adsr_sample(&voice->vol) * 0.2;
+            output += synth2_osc_sample(&voice->osc) * vol_coef;
+        } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
+            const double vol_coef = synth2_adsr_sample(&voice->vol) * 0.2;
+            output += synth2_osc_sample(&voice->osc) * vol_coef;
+
+            const synth2_adsr_state_t state = synth2_adsr_current_state(&voice->vol);
+            if (state == SYNTH2_ADSR_STATE_STOP) {
+                voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
+            }
+        }
+    }
+    return output;
+}
+
+void synth2_plugin_render_audio_f(
     synth2_plugin_t *plugin,
     uint32_t start,
     uint32_t end,
@@ -24,22 +44,18 @@ void synth2_plugin_render_audio(
     float *outputR
 ) {
     for (uint32_t i = start; i < end; i++) {
-        float output = 0.0f;
-        for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-            synth2_plugin_voice_t *voice = &plugin->voices[i];
-            if (voice->state == SYNTH2_PLUGIN_VOICE_HOLDING) {
-                const double vol_coef = synth2_adsr_sample(&voice->vol) * 0.2;
-                output += synth2_osc_sample(&voice->osc) * vol_coef;
-            } else if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
-                const double vol_coef = synth2_adsr_sample(&voice->vol) * 0.2;
-                output += synth2_osc_sample(&voice->osc) * vol_coef;
+        outputL[i] = outputR[i] = render_audio(plugin);
+    }
+}
 
-                const synth2_adsr_state_t state = synth2_adsr_current_state(&voice->vol);
-                if (state == SYNTH2_ADSR_STATE_STOP) {
-                    voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
-                }
-            }
-        }
-        outputL[i] = outputR[i] = output;
+void synth2_plugin_render_audio_d(
+    synth2_plugin_t *plugin,
+    uint32_t start,
+    uint32_t end,
+    double *outputL,
+    double *outputR
+) {
+    for (uint32_t i = start; i < end; i++) {
+        outputL[i] = outputR[i] = render_audio(plugin);
     }
 }
