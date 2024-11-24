@@ -39,6 +39,10 @@ static inline double convert_amp_r(const synth2_params_amp_t *amp) {
     return ((double)amp->r / 128.0) * 2.0 + 0.001;
 }
 
+static inline double convert_duty(uint8_t duty) {
+    return ((double)duty / 128.0) * 0.875 + 0.125;
+}
+
 static void init_voice(
     synth2_plugin_voice_t *voice,
     synth2_plugin_t *plugin,
@@ -50,11 +54,11 @@ static void init_voice(
     const synth2_params_amp_t *amp = &plugin->params.amp;
 
     const double osc1_freq = k2f(note->key);
-    const double osc1_duty = (double)osc1->duty / 128.0;
+    const double osc1_duty = convert_duty(osc1->duty);
     synth2_osc_init(&voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty);
 
     const double osc2_freq = k2f(note->key + osc2->pitch) + (double)osc2->cent;
-    const double osc2_duty = (double)osc2->duty / 128.0;
+    const double osc2_duty = convert_duty(osc2->duty);
     synth2_osc_init(&voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty);
 
     const double amp_a = convert_amp_a(amp);
