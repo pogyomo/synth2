@@ -26,41 +26,68 @@ static inline double clamp01(double value) {
     }
 }
 
-static double process_a(synth2_adsr_t* adsr) {
-    const double d = 1.0 / adsr->a;
-    adsr->curr = clamp01(adsr->prev + d / adsr->sample_rate);
-    adsr->t += 1.0 / adsr->sample_rate;
-    if (adsr->t >= adsr->a) {
-        adsr->t = 0.0;
-        adsr->state = SYNTH2_ADSR_STATE_D;
-    }
-    return adsr->prev;
+static void prepare_a(synth2_adsr_t* adsr) {
+    adsr->t = 0.0;
+    adsr->dt = 1.0 / adsr->a;
+    adsr->curr = 0.0;
+    adsr->state = SYNTH2_ADSR_STATE_A;
 }
 
-static double process_d(synth2_adsr_t* adsr) {
-    const double d = (adsr->curr - adsr->s) / (adsr->d - adsr->t);
-    adsr->curr = clamp01(adsr->prev - d / adsr->sample_rate);
-    adsr->t += 1.0 / adsr->sample_rate;
-    if (adsr->t >= adsr->d) {
-        adsr->t = 0.0;
-        adsr->state = SYNTH2_ADSR_STATE_S;
-    }
-    return adsr->prev;
+static void prepare_d(synth2_adsr_t* adsr) {
+    adsr->t = 0.0;
+    adsr->dt = (1.0 - adsr->s) / adsr->d;
+    adsr->curr = 1.0;
+    adsr->state = SYNTH2_ADSR_STATE_D;
 }
 
-static double process_s(synth2_adsr_t* adsr) {
-    return adsr->prev;
+static void prepare_s(synth2_adsr_t* adsr) {
+    adsr->t = 0.0;
+    adsr->dt = 0.0;
+    adsr->curr = adsr->s;
+    adsr->state = SYNTH2_ADSR_STATE_S;
 }
 
-static double process_r(synth2_adsr_t* adsr) {
-    const double d = adsr->prev / (adsr->r - adsr->t);
-    adsr->curr = clamp01(adsr->prev - d / adsr->sample_rate);
+static void prepare_r(synth2_adsr_t* adsr) {
+    adsr->t = 0.0;
+    adsr->dt = adsr->curr / adsr->r;
+    adsr->state = SYNTH2_ADSR_STATE_R;
+}
+
+static void prepare_stop(synth2_adsr_t* adsr) {
+    adsr->t = 0.0;
+    adsr->dt = 0.0;
+    adsr->curr = 0.0;
+    adsr->state = SYNTH2_ADSR_STATE_STOP;
+}
+
+static void process_a(synth2_adsr_t* adsr) {
+    adsr->curr = clamp01(adsr->curr + adsr->dt / adsr->sample_rate);
     adsr->t += 1.0 / adsr->sample_rate;
-    if (adsr->t >= adsr->r) {
-        adsr->t = 0.0;
-        adsr->state = SYNTH2_ADSR_STATE_STOP;
+    if (adsr->t > adsr->a) prepare_d(adsr);
+}
+
+static void process_d(synth2_adsr_t* adsr) {
+    adsr->curr = clamp01(adsr->curr - adsr->dt / adsr->sample_rate);
+    adsr->t += 1.0 / adsr->sample_rate;
+    if (adsr->t > adsr->d) prepare_s(adsr);
+}
+
+static void process_r(synth2_adsr_t* adsr) {
+    adsr->curr = clamp01(adsr->curr - adsr->dt / adsr->sample_rate);
+    adsr->t += 1.0 / adsr->sample_rate;
+    if (adsr->t > adsr->r) prepare_stop(adsr);
+}
+
+static void init_state(synth2_adsr_t* adsr) {
+    if (adsr->a < 1e-10) {
+        if (adsr->d < 1e-10) {
+            prepare_s(adsr);
+        } else {
+            prepare_d(adsr);
+        }
+    } else {
+        prepare_a(adsr);
     }
-    return adsr->prev;
 }
 
 void synth2_adsr_init(
@@ -77,34 +104,40 @@ void synth2_adsr_init(
     adsr->d = d;
     adsr->s = s;
     adsr->r = r;
-    adsr->t = 0.0;
-    adsr->curr = adsr->prev = 0.0;
-    adsr->state = SYNTH2_ADSR_STATE_A;
+    init_state(adsr);
+}
+
+void synth2_adsr_keyoff(synth2_adsr_t* adsr) {
+    if (adsr->r < 1e-10) {
+        prepare_stop(adsr);
+    } else {
+        prepare_r(adsr);
+    }
 }
 
 synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr) {
     return adsr->state;
 }
 
-void synth2_adsr_keyoff(synth2_adsr_t* adsr) {
-    adsr->t = 0.0;
-    adsr->state = SYNTH2_ADSR_STATE_R;
-}
-
 double synth2_adsr_sample(synth2_adsr_t* adsr) {
-    adsr->prev = adsr->curr;
+    const double result = adsr->curr;
     switch (adsr->state) {
         case SYNTH2_ADSR_STATE_A:
-            return process_a(adsr);
+            process_a(adsr);
+            break;
         case SYNTH2_ADSR_STATE_D:
-            return process_d(adsr);
+            process_d(adsr);
+            break;
         case SYNTH2_ADSR_STATE_S:
-            return process_s(adsr);
+            // Wait until synth2_adsr_keyoff called.
+            break;
         case SYNTH2_ADSR_STATE_R:
-            return process_r(adsr);
+            process_r(adsr);
+            break;
         default:  // SYNTH2_ADSR_STOP
             return 0.0;
     }
+    return result;
 }
 
 void synth2_adsr_set_a(synth2_adsr_t* adsr, double a) {

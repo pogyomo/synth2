@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "synth2-osc/osc.h"
 #include "synth2/ext/audio-ports.h"
 #include "synth2/ext/note-ports.h"
 #include "synth2/ext/params.h"
@@ -28,7 +27,8 @@
 
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
-    plug->osc_wave = SYNTH2_OSC_WAVE_SINE;
+    synth2_params_init_default(&plug->params);
+    synth2_params_init_default(&plug->params);
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_plugin_voice_t *voice = &plug->voices[i];
         voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
