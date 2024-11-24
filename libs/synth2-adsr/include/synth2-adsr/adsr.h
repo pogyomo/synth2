@@ -30,18 +30,24 @@ typedef enum synth2_adsr_state {
 typedef struct synth2_adsr synth2_adsr_t;
 
 /// Create a new synth2_adsr_t object, return pointer to it.
-/// a, d and r is in seconds, and s must be in [0, 1].
-synth2_adsr_t*
-synth2_adsr_create(double sample_rate, double a, double d, double s, double r);
+synth2_adsr_t* synth2_adsr_create(void);
 
 /// Freed allocated memory for this adsr.
 void synth2_adsr_destroy(synth2_adsr_t* adsr);
 
+/// Initialize this ADSR with given parameters.
+/// a, d and r is in seconds, and s must be in [0, 1].
+void synth2_adsr_init(
+    synth2_adsr_t* adsr,
+    double sample_rate,
+    double a,
+    double d,
+    double s,
+    double r
+);
+
 /// Returns current state of the adsr.
 synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr);
-
-/// Reset current state, restart from attack.
-void synth2_adsr_keyon(synth2_adsr_t* adsr);
 
 /// Change state into release.
 void synth2_adsr_keyoff(synth2_adsr_t* adsr);

@@ -19,6 +19,7 @@
 #include "synth2/plugin/process-event.h"
 
 #include "synth2-adsr/adsr.h"
+#include "synth2-osc/osc.h"
 #include "synth2/helper.h"
 
 void synth2_plugin_process_event(
@@ -34,16 +35,13 @@ void synth2_plugin_process_event(
             if (voice->state != SYNTH2_PLUGIN_VOICE_UNUSED) continue;
 
             voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
-            voice->phase = 0.0f;
             voice->note_id = note->note_id;
             voice->channel = note->channel;
             voice->key = note->key;
-            voice->osc = synth2_osc_create(
-                plugin->osc_wave, plugin->sample_rate, k2f(note->key), 1.0
+            synth2_osc_init(
+                voice->osc, plugin->osc_wave, plugin->sample_rate, k2f(note->key), 1.0
             );
-            voice->adsr_vol =
-                synth2_adsr_create(plugin->sample_rate, 0.01, 0.5, 0.5, 0.01);
-            synth2_adsr_keyon(voice->adsr_vol);
+            synth2_adsr_init(voice->vol, plugin->sample_rate, 0.01, 0.5, 0.5, 0.01);
             break;
         }
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
@@ -56,7 +54,7 @@ void synth2_plugin_process_event(
             if (note->channel != -1 && voice->channel != note->channel) continue;
 
             voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
-            synth2_adsr_keyoff(voice->adsr_vol);
+            synth2_adsr_keyoff(voice->vol);
             break;
         }
     } else if (event->type == CLAP_EVENT_PARAM_VALUE) {

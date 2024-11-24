@@ -18,11 +18,23 @@
 
 #include "synth2-osc/internal/macros.h"
 #include "synth2-osc/internal/wave-generator.h"
+#include "synth2-osc/osc.h"
 
-synth2_osc_t*
-synth2_osc_create(synth2_osc_wave_t wave, double sample_rate, double freq, double duty) {
-    synth2_osc_t* osc = calloc(1, sizeof(synth2_osc_t));
-    if (!osc) return NULL;
+synth2_osc_t* synth2_osc_create(void) {
+    return calloc(1, sizeof(synth2_osc_t));
+}
+
+void synth2_osc_destroy(synth2_osc_t* osc) {
+    free(osc);
+}
+
+void synth2_osc_init(
+    synth2_osc_t* osc,
+    synth2_osc_wave_t wave,
+    double sample_rate,
+    double freq,
+    double duty
+) {
     osc->wave = wave;
     osc->sample_rate = sample_rate;
     osc->freq = freq;
@@ -30,11 +42,6 @@ synth2_osc_create(synth2_osc_wave_t wave, double sample_rate, double freq, doubl
     osc->phase = 0.0;
     osc->prev = 0.0;
     osc->gen = synth2_osc_get_wave_generator(wave);
-    return osc;
-}
-
-void synth2_osc_destroy(synth2_osc_t* osc) {
-    free(osc);
 }
 
 double synth2_osc_sample(synth2_osc_t* osc) {

@@ -26,12 +26,20 @@ typedef enum {
 /// Holds contexts for wave generation.
 typedef struct synth2_osc synth2_osc_t;
 
-/// Create new oscillator object with given parameters
-synth2_osc_t*
-synth2_osc_create(synth2_osc_wave_t wave, double sample_rate, double freq, double duty);
+/// Create new oscillator object.
+synth2_osc_t* synth2_osc_create(void);
 
 /// Freed allocated memory for oscillator.
 void synth2_osc_destroy(synth2_osc_t* osc);
+
+/// Initialize oscillator with given parameters
+void synth2_osc_init(
+    synth2_osc_t* osc,
+    synth2_osc_wave_t wave,
+    double sample_rate,
+    double freq,
+    double duty
+);
 
 /// Sample a point from generated wave, then prepare for next sample.
 double synth2_osc_sample(synth2_osc_t* osc);
