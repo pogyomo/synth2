@@ -17,18 +17,15 @@
 #include <stdio.h>
 #include <string.h>
 
-void synth2_params_init_default(synth2_params_t *params) {
-    *params = (synth2_params_t){
-        {SYNTH2_OSC_WAVE_SINE, 128},
-        {SYNTH2_OSC_WAVE_SINE, 128, 0, 0},
-        {64},
-        {0, 0, 128, 0, 64},
-    };
-}
+const synth2_params_t synth2_params_default_value = {
+    {SYNTH2_OSC_WAVE_SINE, 128},
+    {SYNTH2_OSC_WAVE_SINE, 128, 0, 0},
+    {64},
+    {0, 0, 128, 0, 64},
+};
 
 bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
-    synth2_params_t params;
-    synth2_params_init_default(&params);
+    const synth2_params_t *params = &synth2_params_default_value;
     switch ((synth2_param_id_t)param_index) {
         case SYNTH2_PARAM_ID_OSC1_WAVE:
             info->id = param_index;
@@ -37,7 +34,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillator1", sizeof(info->module));
             info->min_value = SYNTH2_OSC_WAVE_SINE;
             info->max_value = SYNTH2_OSC_WAVE_SQUARE;
-            info->default_value = params.osc1.wave;
+            info->default_value = params->osc1.wave;
             return true;
         case SYNTH2_PARAM_ID_OSC1_DUTY:
             info->id = param_index;
@@ -46,7 +43,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillator1", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.osc1.duty;
+            info->default_value = params->osc1.duty;
             return true;
         case SYNTH2_PARAM_ID_OSC2_WAVE:
             info->id = param_index;
@@ -55,7 +52,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillator2", sizeof(info->module));
             info->min_value = SYNTH2_OSC_WAVE_SINE;
             info->max_value = SYNTH2_OSC_WAVE_SQUARE;
-            info->default_value = params.osc2.wave;
+            info->default_value = params->osc2.wave;
             return true;
         case SYNTH2_PARAM_ID_OSC2_DUTY:
             info->id = param_index;
@@ -64,7 +61,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillator2", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.osc2.duty;
+            info->default_value = params->osc2.duty;
             return true;
         case SYNTH2_PARAM_ID_OSC2_PITCH:
             info->id = param_index;
@@ -73,7 +70,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillator2", sizeof(info->module));
             info->min_value = -12;
             info->max_value = 12;
-            info->default_value = params.osc2.pitch;
+            info->default_value = params->osc2.pitch;
             return true;
         case SYNTH2_PARAM_ID_OSC2_CENT:
             info->id = param_index;
@@ -82,7 +79,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillator2", sizeof(info->module));
             info->min_value = -64;
             info->max_value = 64;
-            info->default_value = params.osc2.cent;
+            info->default_value = params->osc2.cent;
             return true;
         case SYNTH2_PARAM_ID_OSCS_MIX:
             info->id = param_index;
@@ -91,7 +88,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Oscillators", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.oscs.mix;
+            info->default_value = params->oscs.mix;
             return true;
         case SYNTH2_PARAM_ID_AMP_A:
             info->id = param_index;
@@ -100,7 +97,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Amplifier", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.amp.a;
+            info->default_value = params->amp.a;
             return true;
         case SYNTH2_PARAM_ID_AMP_D:
             info->id = param_index;
@@ -109,7 +106,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Amplifier", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.amp.d;
+            info->default_value = params->amp.d;
             return true;
         case SYNTH2_PARAM_ID_AMP_S:
             info->id = param_index;
@@ -118,7 +115,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Amplifier", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.amp.s;
+            info->default_value = params->amp.s;
             return true;
         case SYNTH2_PARAM_ID_AMP_R:
             info->id = param_index;
@@ -128,7 +125,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->min_value = 0;
             info->max_value = 128;
             info->default_value = 0;
-            info->default_value = params.amp.r;
+            info->default_value = params->amp.r;
             return true;
         case SYNTH2_PARAM_ID_AMP_GAIN:
             info->id = param_index;
@@ -137,7 +134,7 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             strncpy(info->module, "Amplifier", sizeof(info->module));
             info->min_value = 0;
             info->max_value = 128;
-            info->default_value = params.amp.gain;
+            info->default_value = params->amp.gain;
             return true;
         default:
             return false;
