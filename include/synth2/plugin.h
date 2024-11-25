@@ -41,8 +41,7 @@ typedef struct synth2_plugin {
 /// Descriptor of synth2 plugin.
 extern const clap_plugin_descriptor_t synth2_plugin_descriptor;
 
-/// Create plugin, return pointer to clap_plugin_t.
-/// plugin_data holds pointer to synth2_plugin_t.
-const clap_plugin_t *synth2_plugin_create(const clap_host_t *host);
+/// Create plugin, return pointer to it.
+const synth2_plugin_t *synth2_plugin_create(const clap_host_t *host);
 
 #endif  // SYNTH2_PLUGIN_H_
