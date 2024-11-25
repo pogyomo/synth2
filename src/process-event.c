@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO:
-// This module is used by more than two file.
-// So, maybe this file need to be independent module.
-
-#include "synth2/plugin/process-event.h"
+#include "synth2/process-event.h"
 
 #include "synth2-adsr/adsr.h"
 #include "synth2-osc/osc.h"
@@ -44,7 +40,7 @@ static inline double convert_duty(uint8_t duty) {
 }
 
 static void init_voice(
-    synth2_plugin_voice_t *voice,
+    synth2_voice_t *voice,
     synth2_plugin_t *plugin,
     const clap_event_note_t *note
 ) {
@@ -69,8 +65,8 @@ static void init_voice(
 }
 
 /// Find unused voice, or oldest voice if all voice used.
-static size_t find_useable_voice_idx(synth2_plugin_voice_t *voices) {
-    synth2_plugin_voice_id_t min_id = UINT64_MAX;
+static size_t find_useable_voice_idx(synth2_voice_t *voices) {
+    synth2_voice_id_t min_id = UINT64_MAX;
     size_t min_idx;
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         if (voices[i].id < min_id) {
@@ -84,17 +80,14 @@ static size_t find_useable_voice_idx(synth2_plugin_voice_t *voices) {
     return min_idx;
 }
 
-void synth2_plugin_process_event(
-    synth2_plugin_t *plugin,
-    const clap_event_header_t *event
-) {
+void synth2_process_event(synth2_plugin_t *plugin, const clap_event_header_t *event) {
     if (event->space_id != CLAP_CORE_EVENT_SPACE_ID) return;
 
     if (event->type == CLAP_EVENT_NOTE_ON) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
 
         size_t voice_idx = find_useable_voice_idx(plugin->voices);
-        synth2_plugin_voice_t *voice = &plugin->voices[voice_idx];
+        synth2_voice_t *voice = &plugin->voices[voice_idx];
         voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
         voice->note_id = note->note_id;
         voice->channel = note->channel;
@@ -104,7 +97,7 @@ void synth2_plugin_process_event(
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
         for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-            synth2_plugin_voice_t *voice = &plugin->voices[i];
+            synth2_voice_t *voice = &plugin->voices[i];
             if (voice->state != SYNTH2_PLUGIN_VOICE_HOLDING) continue;
             if (note->key != -1 && voice->key != note->key) continue;
             if (note->note_id != -1 && voice->note_id != note->note_id) continue;

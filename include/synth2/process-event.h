@@ -12,27 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_PLUGIN_RENDER_AUDIO_H_
-#define SYNTH2_PLUGIN_RENDER_AUDIO_H_
+#ifndef SYNTH2_PROCESS_EVENT_H_
+#define SYNTH2_PROCESS_EVENT_H_
 
 #include "synth2/plugin.h"
 
-/// Rendering preprocessed audio to buffer of type float.
-void synth2_plugin_render_audio_f(
-    synth2_plugin_t *plugin,
-    uint32_t start,
-    uint32_t end,
-    float *outputL,
-    float *outputR
-);
+/// Process given event.
+void synth2_process_event(synth2_plugin_t *plugin, const clap_event_header_t *event);
 
-/// Rendering preprocessed audio to buffer of type double.
-void synth2_plugin_render_audio_d(
-    synth2_plugin_t *plugin,
-    uint32_t start,
-    uint32_t end,
-    double *outputL,
-    double *outputR
-);
-
-#endif  // SYNTH2_PLUGIN_RENDER_AUDIO_H_
+#endif  // SYNTH2_PROCESS_EVENT_H_

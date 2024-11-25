@@ -17,7 +17,7 @@
 #include "clap/events.h"
 #include "synth2/params.h"
 #include "synth2/plugin.h"
-#include "synth2/plugin/process-event.h"
+#include "synth2/process-event.h"
 
 static uint32_t synth2_plugin_params_count(const clap_plugin_t *plugin) {
     return SYNTH2_NUM_PARAMS;
@@ -67,7 +67,7 @@ static void synth2_plugin_params_flush(
     uint32_t in_size = in->size(in);
     for (uint32_t i = 0; i < in_size; i++) {
         const clap_event_header_t *event = in->get(in, i);
-        synth2_plugin_process_event(plugin->plugin_data, event);
+        synth2_process_event(plugin->plugin_data, event);
     }
     return;
 }

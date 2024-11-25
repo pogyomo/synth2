@@ -22,8 +22,8 @@
 #include "synth2/ext/audio-ports.h"
 #include "synth2/ext/note-ports.h"
 #include "synth2/ext/params.h"
-#include "synth2/plugin/process-event.h"
-#include "synth2/plugin/render-audio.h"
+#include "synth2/process-event.h"
+#include "synth2/render-audio.h"
 
 static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
@@ -31,7 +31,7 @@ static bool synth2_plugin_init(const clap_plugin_t *plugin) {
 
     plug->next_voice_id = 0;
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-        synth2_plugin_voice_t *voice = &plug->voices[i];
+        synth2_voice_t *voice = &plug->voices[i];
         voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
     }
 
@@ -91,7 +91,7 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
                 break;
             }
 
-            synth2_plugin_process_event(plug, header);
+            synth2_process_event(plug, header);
             ++event_index;
 
             if (event_index == input_events_count) {
@@ -104,18 +104,18 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
         if (process->audio_outputs[0].data32) {
             float *outoutL = process->audio_outputs[0].data32[0];
             float *outoutR = process->audio_outputs[0].data32[1];
-            synth2_plugin_render_audio_f(plug, i, next_event_frame, outoutL, outoutR);
+            synth2_render_audio_f(plug, i, next_event_frame, outoutL, outoutR);
         } else {
             double *outoutL = process->audio_outputs[0].data64[0];
             double *outoutR = process->audio_outputs[0].data64[1];
-            synth2_plugin_render_audio_d(plug, i, next_event_frame, outoutL, outoutR);
+            synth2_render_audio_d(plug, i, next_event_frame, outoutL, outoutR);
         }
 
         i = next_event_frame;
     }
 
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-        synth2_plugin_voice_t *voice = &plug->voices[i];
+        synth2_voice_t *voice = &plug->voices[i];
         if (voice->state == SYNTH2_PLUGIN_VOICE_POST_PROCESS) {
             clap_event_note_t event;
             event.header.size = sizeof(event);
