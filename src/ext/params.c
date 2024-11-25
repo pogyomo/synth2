@@ -14,7 +14,8 @@
 
 #include "synth2/ext/params.h"
 
-#include "clap/events.h"
+#include <clap/events.h>
+
 #include "synth2/params.h"
 #include "synth2/plugin.h"
 #include "synth2/process-event.h"
