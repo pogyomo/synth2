@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_PLUGIN_VOICE_H_
-#define SYNTH2_PLUGIN_VOICE_H_
+#ifndef SYNTH2_VOICE_H_
+#define SYNTH2_VOICE_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -21,11 +21,11 @@
 #include "synth2-adsr/adsr.h"
 #include "synth2-osc/osc.h"
 
-typedef uint64_t synth2_plugin_voice_id_t;
+typedef uint64_t synth2_voice_id_t;
 
 /// The state of synth2_plugin_voice_t.
 /// The state changes from top to bottom, then back to top.
-typedef enum synth2_plugin_voice_state {
+typedef enum synth2_voice_state {
     /// The voice is not attached to any sound.
     SYNTH2_PLUGIN_VOICE_UNUSED = 0,
 
@@ -37,16 +37,16 @@ typedef enum synth2_plugin_voice_state {
 
     /// Sound generation finished. Do post process for host.
     SYNTH2_PLUGIN_VOICE_POST_PROCESS = 3,
-} synth2_plugin_voice_state_t;
+} synth2_voice_state_t;
 
 /// This struct represent a maybe playing sounds.
-typedef struct synth2_plugin_voice {
+typedef struct synth2_voice {
     /// Current state of this voice.
-    synth2_plugin_voice_state_t state;
+    synth2_voice_state_t state;
 
     /// When this voice lastly used.
     /// Voice with smaller id is older.
-    synth2_plugin_voice_id_t id;
+    synth2_voice_id_t id;
 
     /// Objects for wave generation.
     synth2_osc_t osc1;
@@ -57,6 +57,6 @@ typedef struct synth2_plugin_voice {
     int16_t note_id;
     int16_t channel;
     int16_t key;
-} synth2_plugin_voice_t;
+} synth2_voice_t;
 
-#endif  // SYNTH2_PLUGIN_VOICE_H_
+#endif  // SYNTH2_VOICE_H_

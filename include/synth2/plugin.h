@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 #include "synth2/params.h"
-#include "synth2/plugin/voice.h"
+#include "synth2/voice.h"
 
 #define SYNTH2_PLUGIN_MAX_VOICES 32
 
@@ -34,8 +34,8 @@ typedef struct synth2_plugin {
     synth2_params_t params;
 
     /// Voices to be used to render audio.
-    synth2_plugin_voice_id_t next_voice_id;
-    synth2_plugin_voice_t voices[SYNTH2_PLUGIN_MAX_VOICES];
+    synth2_voice_id_t next_voice_id;
+    synth2_voice_t voices[SYNTH2_PLUGIN_MAX_VOICES];
 } synth2_plugin_t;
 
 /// Descriptor of synth2 plugin.

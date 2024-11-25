@@ -7,8 +7,9 @@ add_library(synth2 MODULE
     helper.c
     params.c
     plugin.c
-    plugin/process-event.c
-    plugin/render-audio.c
+    process-event.c
+    render-audio.c
+    voice.c
 )
 
 # Collect libraries for target_link_libraries.
@@ -19,6 +20,10 @@ endif()
 
 target_include_directories(synth2 PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(synth2 ${SYNTH2_LINK_LIBRARIES})
+
+# Clangd can't recognize voice.h is on this project without correspond source file.
+# So create a empty source file corresponds to it at configure time to solve the problem.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/voice.c" "")
 
 set_target_properties(synth2 PROPERTIES
     PREFIX ""
