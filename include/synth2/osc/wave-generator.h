@@ -12,10 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_OSC_INTERNAL_MACROS_H_
-#define SYNTH2_OSC_INTERNAL_MACROS_H_
+#ifndef SYNTH2_OSC_WAVE_GENERATOR_H_
+#define SYNTH2_OSC_WAVE_GENERATOR_H_
 
-#define PI 3.14159265
-#define PI2 (2.0 * (PI))
+#include "synth2/osc/wave.h"
 
-#endif  // SYNTH2_OSC_INTERNAL_MACROS_H_
+/// The wave generation function. Accept following arguments.
+/// 1. phase: position in one-cycle wave. Must be in [0, 2π).
+/// 2. prev:  previously sampled value.
+/// 3. duty:  duty of the wave, but is maybe unused.
+typedef double (*synth2_osc_wave_generator)(double phase, double prev, double duty);
+
+/// Returns wave_generator based on wave type.
+synth2_osc_wave_generator synth2_osc_get_wave_generator(synth2_osc_wave_t wave);
+
+#endif  // SYNTH2_OSC_WAVE_GENERATOR_H_

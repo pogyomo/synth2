@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_ADSR_ADSR_H_
-#define SYNTH2_ADSR_ADSR_H_
+#ifndef SYNTH2_ADSR_H_
+#define SYNTH2_ADSR_H_
 
 #include <stdbool.h>
 
@@ -78,4 +78,4 @@ void synth2_adsr_set_r(synth2_adsr_t* adsr, double r);
 /// Set release time.
 double synth2_adsr_get_r(const synth2_adsr_t* adsr);
 
-#endif  // SYNTH2_ADSR_ADSR_H_
+#endif  // SYNTH2_ADSR_H_

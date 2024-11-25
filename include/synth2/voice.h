@@ -18,8 +18,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "synth2-adsr/adsr.h"
-#include "synth2-osc/osc.h"
+#include "synth2/adsr.h"
+#include "synth2/osc.h"
 
 typedef uint64_t synth2_voice_id_t;
 

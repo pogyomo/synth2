@@ -12,24 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_OSC_OSC_H_
-#define SYNTH2_OSC_OSC_H_
+#ifndef SYNTH2_OSC_H_
+#define SYNTH2_OSC_H_
 
-/// The wave generation function. Accept following arguments.
-/// 1. phase: position in one-cycle wave. Must be in [0, 2π).
-/// 2. prev:  previously sampled value.
-/// 3. duty:  duty of the wave, but is maybe unused.
-typedef double (*synth2_osc_wave_generator)(double phase, double prev, double duty);
-
-/// Wave types the oscillator can generate.
-typedef enum {
-    SYNTH2_OSC_WAVE_SINE,
-    SYNTH2_OSC_WAVE_TRIANGLE,
-    SYNTH2_OSC_WAVE_SAW,
-    SYNTH2_OSC_WAVE_SQUARE,
-    SYNTH2_OSC_WAVE_MIN = SYNTH2_OSC_WAVE_SINE,
-    SYNTH2_OSC_WAVE_MAX = SYNTH2_OSC_WAVE_SQUARE,
-} synth2_osc_wave_t;
+#include "synth2/osc/wave-generator.h"
+#include "synth2/osc/wave.h"
 
 /// Holds contexts for wave generation.
 typedef struct synth2_osc {
@@ -69,4 +56,4 @@ void synth2_osc_set_duty(synth2_osc_t* osc, double duty);
 /// Returns current duty cycle.
 double synth2_osc_get_duty(const synth2_osc_t* osc);
 
-#endif  // SYNTH2_OSC_OSC_H_
+#endif  // SYNTH2_OSC_H_
