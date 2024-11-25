@@ -25,7 +25,7 @@
 #include "synth2/process-event.h"
 #include "synth2/render-audio.h"
 
-static bool synth2_plugin_init(const clap_plugin_t *plugin) {
+static bool plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
     plug->params = synth2_params_default_value;
 
@@ -38,12 +38,12 @@ static bool synth2_plugin_init(const clap_plugin_t *plugin) {
     return true;
 }
 
-static void synth2_plugin_destroy(const clap_plugin_t *plugin) {
+static void plugin_destroy(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
     free(plug);
 }
 
-static bool synth2_plugin_activate(
+static bool plugin_activate(
     const clap_plugin_t *plugin,
     double sample_rate,
     uint32_t min_frames_count,
@@ -54,24 +54,24 @@ static bool synth2_plugin_activate(
     return true;
 }
 
-static void synth2_plugin_deactivate(const clap_plugin_t *plugin) {
+static void plugin_deactivate(const clap_plugin_t *plugin) {
     return;
 }
 
-static bool synth2_plugin_start_processing(const clap_plugin_t *plugin) {
+static bool plugin_start_processing(const clap_plugin_t *plugin) {
     return true;
 }
 
-static void synth2_plugin_stop_processing(const clap_plugin_t *plugin) {
+static void plugin_stop_processing(const clap_plugin_t *plugin) {
     return;
 }
 
-static void synth2_plugin_reset(const clap_plugin_t *plugin) {
+static void plugin_reset(const clap_plugin_t *plugin) {
     return;
 }
 
 static clap_process_status
-synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
+plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
     synth2_plugin_t *plug = plugin->plugin_data;
 
     assert(process->audio_inputs_count == 0);
@@ -135,8 +135,7 @@ synth2_plugin_process(const clap_plugin_t *plugin, const clap_process_t *process
     return CLAP_PROCESS_CONTINUE;
 }
 
-static const void *
-synth2_plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
+static const void *plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
     if (strcmp(id, CLAP_EXT_AUDIO_PORTS) == 0) {
         return &synth2_plugin_audio_ports;
     } else if (strcmp(id, CLAP_EXT_NOTE_PORTS) == 0) {
@@ -148,12 +147,12 @@ synth2_plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
     }
 }
 
-static void synth2_plugin_on_main_thread(const clap_plugin_t *plugin) {
+static void plugin_on_main_thread(const clap_plugin_t *plugin) {
     return;
 }
 
 // clang-format off
-static const char *synth2_plugin_descriptor_features[] = {
+static const char *features[] = {
     CLAP_PLUGIN_FEATURE_INSTRUMENT,
     CLAP_PLUGIN_FEATURE_SYNTHESIZER,
     CLAP_PLUGIN_FEATURE_STEREO,
@@ -171,7 +170,7 @@ const clap_plugin_descriptor_t synth2_plugin_descriptor = {
     .support_url = NULL,
     .version = "0.1.0",
     .description = "Yet another synthesizer",
-    .features = synth2_plugin_descriptor_features,
+    .features = features,
 };
 
 const synth2_plugin_t *synth2_plugin_create(const clap_host_t *host) {
@@ -181,16 +180,16 @@ const synth2_plugin_t *synth2_plugin_create(const clap_host_t *host) {
     plugin->host = host;
     plugin->plugin.desc = &synth2_plugin_descriptor;
     plugin->plugin.plugin_data = plugin;
-    plugin->plugin.init = synth2_plugin_init;
-    plugin->plugin.destroy = synth2_plugin_destroy;
-    plugin->plugin.activate = synth2_plugin_activate;
-    plugin->plugin.deactivate = synth2_plugin_deactivate;
-    plugin->plugin.start_processing = synth2_plugin_start_processing;
-    plugin->plugin.stop_processing = synth2_plugin_stop_processing;
-    plugin->plugin.reset = synth2_plugin_reset;
-    plugin->plugin.process = synth2_plugin_process;
-    plugin->plugin.get_extension = synth2_plugin_get_extension;
-    plugin->plugin.on_main_thread = synth2_plugin_on_main_thread;
+    plugin->plugin.init = plugin_init;
+    plugin->plugin.destroy = plugin_destroy;
+    plugin->plugin.activate = plugin_activate;
+    plugin->plugin.deactivate = plugin_deactivate;
+    plugin->plugin.start_processing = plugin_start_processing;
+    plugin->plugin.stop_processing = plugin_stop_processing;
+    plugin->plugin.reset = plugin_reset;
+    plugin->plugin.process = plugin_process;
+    plugin->plugin.get_extension = plugin_get_extension;
+    plugin->plugin.on_main_thread = plugin_on_main_thread;
 
     return plugin;
 }

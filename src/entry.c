@@ -17,15 +17,15 @@
 
 #include "synth2/factory/plugin-factory.h"
 
-static bool synth2_entry_init(const char *plugin_path) {
+static bool entry_init(const char *plugin_path) {
     return true;
 }
 
-static void synth2_entry_deinit(void) {
+static void entry_deinit(void) {
     return;
 }
 
-static const void *synth2_entry_get_factory(const char *factory_id) {
+static const void *entry_get_factory(const char *factory_id) {
     if (strcmp(factory_id, CLAP_PLUGIN_FACTORY_ID) == 0) {
         return &synth2_plugin_factory;
     } else {
@@ -35,7 +35,7 @@ static const void *synth2_entry_get_factory(const char *factory_id) {
 
 const clap_plugin_entry_t clap_entry = {
     .clap_version = CLAP_VERSION_INIT,
-    .init = synth2_entry_init,
-    .deinit = synth2_entry_deinit,
-    .get_factory = synth2_entry_get_factory,
+    .init = entry_init,
+    .deinit = entry_deinit,
+    .get_factory = entry_get_factory,
 };

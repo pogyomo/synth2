@@ -18,13 +18,11 @@
 
 #include "synth2/plugin.h"
 
-static uint32_t synth2_plugin_factory_get_plugin_count(
-    const clap_plugin_factory_t *factory
-) {
+static uint32_t plugin_factory_get_plugin_count(const clap_plugin_factory_t *factory) {
     return 1;
 }
 
-static const clap_plugin_descriptor_t *synth2_plugin_factory_get_plugin_descriptor(
+static const clap_plugin_descriptor_t *plugin_factory_get_plugin_descriptor(
     const clap_plugin_factory_t *factory,
     uint32_t index
 ) {
@@ -35,7 +33,7 @@ static const clap_plugin_descriptor_t *synth2_plugin_factory_get_plugin_descript
     }
 }
 
-static const clap_plugin_t *synth2_plugin_factory_create_plugin(
+static const clap_plugin_t *plugin_factory_create_plugin(
     const struct clap_plugin_factory *factory,
     const clap_host_t *host,
     const char *plugin_id
@@ -49,7 +47,7 @@ static const clap_plugin_t *synth2_plugin_factory_create_plugin(
 }
 
 const clap_plugin_factory_t synth2_plugin_factory = {
-    .get_plugin_count = synth2_plugin_factory_get_plugin_count,
-    .get_plugin_descriptor = synth2_plugin_factory_get_plugin_descriptor,
-    .create_plugin = synth2_plugin_factory_create_plugin,
+    .get_plugin_count = plugin_factory_get_plugin_count,
+    .get_plugin_descriptor = plugin_factory_get_plugin_descriptor,
+    .create_plugin = plugin_factory_create_plugin,
 };

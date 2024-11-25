@@ -19,28 +19,22 @@
 #include "synth2/plugin.h"
 #include "synth2/process-event.h"
 
-static uint32_t synth2_plugin_params_count(const clap_plugin_t *plugin) {
+static uint32_t params_count(const clap_plugin_t *plugin) {
     return SYNTH2_NUM_PARAMS;
 }
 
-static bool synth2_plugin_params_get_info(
-    const clap_plugin_t *plugin,
-    uint32_t index,
-    clap_param_info_t *info
-) {
+static bool
+params_get_info(const clap_plugin_t *plugin, uint32_t index, clap_param_info_t *info) {
     return synth2_params_get_info(index, info);
 }
 
-static bool synth2_plugin_params_get_value(
-    const clap_plugin_t *plugin,
-    clap_id param_id,
-    double *out_value
-) {
+static bool
+params_get_value(const clap_plugin_t *plugin, clap_id param_id, double *out_value) {
     const synth2_plugin_t *plug = plugin->plugin_data;
     return synth2_params_get_value(&plug->params, param_id, out_value);
 }
 
-static bool synth2_plugin_params_value_to_text(
+static bool params_value_to_text(
     const clap_plugin_t *plugin,
     clap_id param_id,
     double value,
@@ -50,7 +44,7 @@ static bool synth2_plugin_params_value_to_text(
     return synth2_params_value_to_text(param_id, value, out_buffer, out_buffer_capacity);
 }
 
-static bool synth2_plugin_params_text_to_value(
+static bool params_text_to_value(
     const clap_plugin_t *plugin,
     clap_id param_id,
     const char *param_value_text,
@@ -59,7 +53,7 @@ static bool synth2_plugin_params_text_to_value(
     return synth2_params_text_to_value(param_id, param_value_text, out_value);
 }
 
-static void synth2_plugin_params_flush(
+static void params_flush(
     const clap_plugin_t *plugin,
     const clap_input_events_t *in,
     const clap_output_events_t *out
@@ -73,10 +67,10 @@ static void synth2_plugin_params_flush(
 }
 
 const clap_plugin_params_t synth2_plugin_params = {
-    .count = synth2_plugin_params_count,
-    .get_info = synth2_plugin_params_get_info,
-    .get_value = synth2_plugin_params_get_value,
-    .value_to_text = synth2_plugin_params_value_to_text,
-    .text_to_value = synth2_plugin_params_text_to_value,
-    .flush = synth2_plugin_params_flush,
+    .count = params_count,
+    .get_info = params_get_info,
+    .get_value = params_get_value,
+    .value_to_text = params_value_to_text,
+    .text_to_value = params_text_to_value,
+    .flush = params_flush,
 };
