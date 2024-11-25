@@ -16,12 +16,11 @@
 
 #include <string.h>
 
-static uint32_t
-synth2_plugin_note_ports_count(const clap_plugin_t *plugin, bool is_input) {
+static uint32_t note_ports_count(const clap_plugin_t *plugin, bool is_input) {
     return is_input ? 1 : 0;
 }
 
-static bool synth2_plugin_note_ports_get(
+static bool note_ports_get(
     const clap_plugin_t *plugin,
     uint32_t index,
     bool is_input,
@@ -38,6 +37,6 @@ static bool synth2_plugin_note_ports_get(
 }
 
 const clap_plugin_note_ports_t synth2_plugin_note_ports = {
-    .count = synth2_plugin_note_ports_count,
-    .get = synth2_plugin_note_ports_get,
+    .count = note_ports_count,
+    .get = note_ports_get,
 };
