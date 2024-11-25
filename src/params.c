@@ -32,8 +32,8 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
             strncpy(info->name, "Wave", sizeof(info->name));
             strncpy(info->module, "Oscillator1", sizeof(info->module));
-            info->min_value = SYNTH2_OSC_WAVE_SINE;
-            info->max_value = SYNTH2_OSC_WAVE_SQUARE;
+            info->min_value = SYNTH2_OSC_WAVE_MIN;
+            info->max_value = SYNTH2_OSC_WAVE_MAX;
             info->default_value = params->osc1.wave;
             return true;
         case SYNTH2_PARAM_ID_OSC1_DUTY:
@@ -50,8 +50,8 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
             strncpy(info->name, "Wave", sizeof(info->name));
             strncpy(info->module, "Oscillator2", sizeof(info->module));
-            info->min_value = SYNTH2_OSC_WAVE_SINE;
-            info->max_value = SYNTH2_OSC_WAVE_SQUARE;
+            info->min_value = SYNTH2_OSC_WAVE_MIN;
+            info->max_value = SYNTH2_OSC_WAVE_MAX;
             info->default_value = params->osc2.wave;
             return true;
         case SYNTH2_PARAM_ID_OSC2_DUTY:
