@@ -41,7 +41,8 @@ static const clap_plugin_t *synth2_plugin_factory_create_plugin(
     const char *plugin_id
 ) {
     if (strcmp(plugin_id, synth2_plugin_descriptor.id) == 0) {
-        return synth2_plugin_create(host);
+        const synth2_plugin_t *plugin = synth2_plugin_create(host);
+        return plugin ? &plugin->plugin : NULL;
     } else {
         return NULL;
     }

@@ -174,7 +174,7 @@ const clap_plugin_descriptor_t synth2_plugin_descriptor = {
     .features = synth2_plugin_descriptor_features,
 };
 
-const clap_plugin_t *synth2_plugin_create(const clap_host_t *host) {
+const synth2_plugin_t *synth2_plugin_create(const clap_host_t *host) {
     synth2_plugin_t *plugin = calloc(1, sizeof(synth2_plugin_t));
     if (!plugin) return NULL;
 
@@ -192,5 +192,5 @@ const clap_plugin_t *synth2_plugin_create(const clap_host_t *host) {
     plugin->plugin.get_extension = synth2_plugin_get_extension;
     plugin->plugin.on_main_thread = synth2_plugin_on_main_thread;
 
-    return &plugin->plugin;
+    return plugin;
 }
