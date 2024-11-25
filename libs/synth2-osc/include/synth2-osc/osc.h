@@ -23,10 +23,12 @@ typedef double (*synth2_osc_wave_generator)(double phase, double prev, double du
 
 /// Wave types the oscillator can generate.
 typedef enum {
-    SYNTH2_OSC_WAVE_SINE = 0,
-    SYNTH2_OSC_WAVE_TRIANGLE = 1,
-    SYNTH2_OSC_WAVE_SAW = 2,
-    SYNTH2_OSC_WAVE_SQUARE = 3,
+    SYNTH2_OSC_WAVE_SINE,
+    SYNTH2_OSC_WAVE_TRIANGLE,
+    SYNTH2_OSC_WAVE_SAW,
+    SYNTH2_OSC_WAVE_SQUARE,
+    SYNTH2_OSC_WAVE_MIN = SYNTH2_OSC_WAVE_SINE,
+    SYNTH2_OSC_WAVE_MAX = SYNTH2_OSC_WAVE_SQUARE,
 } synth2_osc_wave_t;
 
 /// Holds contexts for wave generation.
