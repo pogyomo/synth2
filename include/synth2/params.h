@@ -66,7 +66,7 @@ typedef struct synth2_params {
     synth2_params_amp_t amp;
 } synth2_params_t;
 
-void synth2_params_init_default(synth2_params_t *params);
+extern const synth2_params_t synth2_params_default_value;
 
 bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info);
 
