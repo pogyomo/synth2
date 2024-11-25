@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "synth2-adsr/adsr.h"
+#include "synth2/adsr.h"
 
 #include <assert.h>
 

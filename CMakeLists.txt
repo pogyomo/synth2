@@ -5,6 +5,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 
 add_subdirectory(libs/clap)
-add_subdirectory(libs/synth2-osc)
-add_subdirectory(libs/synth2-adsr)
 add_subdirectory(src)

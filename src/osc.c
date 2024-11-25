@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "synth2-osc/osc.h"
+#include "synth2/osc.h"
 
-#include "synth2-osc/internal/macros.h"
-#include "synth2-osc/internal/wave-generator.h"
+#include "synth2/osc/macros.h"
+#include "synth2/osc/wave-generator.h"
 
 void synth2_osc_init(
     synth2_osc_t* osc,

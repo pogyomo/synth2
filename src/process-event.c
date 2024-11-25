@@ -14,9 +14,9 @@
 
 #include "synth2/process-event.h"
 
-#include "synth2-adsr/adsr.h"
-#include "synth2-osc/osc.h"
+#include "synth2/adsr.h"
 #include "synth2/helper.h"
+#include "synth2/osc.h"
 #include "synth2/params.h"
 
 static inline double convert_amp_a(const synth2_params_amp_t *amp) {

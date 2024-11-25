@@ -15,10 +15,10 @@
 #ifndef SYNTH2_PARAMS_H_
 #define SYNTH2_PARAMS_H_
 
+#include <clap/ext/params.h>
 #include <stdint.h>
 
-#include "clap/ext/params.h"
-#include "synth2-osc/osc.h"
+#include "synth2/osc/wave.h"
 
 #define SYNTH2_NUM_PARAMS 12
 

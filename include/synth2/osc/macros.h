@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_OSC_INTERNAL_WAVE_GENERATOR_H_
-#define SYNTH2_OSC_INTERNAL_WAVE_GENERATOR_H_
+#ifndef SYNTH2_OSC_MACROS_H_
+#define SYNTH2_OSC_MACROS_H_
 
-#include "synth2-osc/osc.h"
+#define PI 3.14159265
+#define PI2 (2.0 * (PI))
 
-/// Returns wave_generator based on wave type.
-synth2_osc_wave_generator synth2_osc_get_wave_generator(synth2_osc_wave_t wave);
-
-#endif  // SYNTH2_OSC_INTERNAL_WAVE_GENERATOR_H_
+#endif  // SYNTH2_OSC_MACROS_H_

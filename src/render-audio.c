@@ -14,7 +14,7 @@
 
 #include "synth2/render-audio.h"
 
-#include "synth2-adsr/adsr.h"
+#include "synth2/adsr.h"
 
 static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
     const double amp =
