@@ -9,6 +9,7 @@ add_library(synth2-core STATIC
     ext/note-ports.c
     ext/params.c
     factory/plugin-factory.c
+    filter.c
     helper.c
     osc.c
     osc/wave-generator.c

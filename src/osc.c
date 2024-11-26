@@ -14,7 +14,7 @@
 
 #include "synth2/osc.h"
 
-#include "synth2/osc/macros.h"
+#include "synth2/macros.h"
 #include "synth2/osc/wave-generator.h"
 
 void synth2_osc_init(
