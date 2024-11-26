@@ -6,6 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 
 set(UNITY_EXTENSION_FIXTURE ON)
+add_compile_definitions(UNITY_INCLUDE_DOUBLE)
 
 add_subdirectory(libs/clap)
 add_subdirectory(libs/unity)

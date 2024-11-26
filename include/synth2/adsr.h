@@ -16,22 +16,23 @@
 #define SYNTH2_ADSR_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
-typedef enum synth2_adsr_state {
-    SYNTH2_ADSR_STATE_A,
-    SYNTH2_ADSR_STATE_D,
-    SYNTH2_ADSR_STATE_S,
-    SYNTH2_ADSR_STATE_R,
-    SYNTH2_ADSR_STATE_STOP,
-} synth2_adsr_state_t;
+typedef enum synth2_adsr_stage {
+    SYNTH2_ADSR_STAGE_A,
+    SYNTH2_ADSR_STAGE_D,
+    SYNTH2_ADSR_STAGE_S,
+    SYNTH2_ADSR_STAGE_R,
+    SYNTH2_ADSR_STAGE_END,
+} synth2_adsr_stage_t;
 
 /// This object provides functional for generate [0, 1] normalized value
 /// changes through time.
 typedef struct synth2_adsr {
     double sample_rate;
     double a, d, s, r;
-    double t, dt, curr;
-    synth2_adsr_state_t state;
+    uint64_t t;
+    bool keyoff;
 } synth2_adsr_t;
 
 /// Initialize this ADSR with given parameters.
@@ -46,7 +47,7 @@ void synth2_adsr_init(
 );
 
 /// Returns current state of the adsr.
-synth2_adsr_state_t synth2_adsr_current_state(const synth2_adsr_t* adsr);
+synth2_adsr_stage_t synth2_adsr_current_stage(const synth2_adsr_t* adsr);
 
 /// Change state into release.
 void synth2_adsr_keyoff(synth2_adsr_t* adsr);

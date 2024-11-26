@@ -37,8 +37,8 @@ static double render_audio(synth2_plugin_t *plugin) {
         }
 
         if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
-            const synth2_adsr_state_t state = synth2_adsr_current_state(&voice->amp);
-            if (state == SYNTH2_ADSR_STATE_STOP) {
+            const synth2_adsr_stage_t state = synth2_adsr_current_stage(&voice->amp);
+            if (state == SYNTH2_ADSR_STAGE_END) {
                 voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
             }
         }
