@@ -16,7 +16,7 @@
 
 #include <math.h>
 
-#include "synth2/osc/macros.h"
+#include "synth2/macros.h"
 
 static double wave_generator_sine(double x, double prev, double duty) {
     return sin(x);

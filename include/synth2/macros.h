@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_OSC_MACROS_H_
-#define SYNTH2_OSC_MACROS_H_
+#ifndef SYNTH2_MACROS_H_
+#define SYNTH2_MACROS_H_
 
 #define PI 3.14159265
 #define PI2 (2.0 * (PI))
 
-#endif  // SYNTH2_OSC_MACROS_H_
+#endif  // SYNTH2_MACROS_H_

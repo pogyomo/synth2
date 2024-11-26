@@ -3,12 +3,16 @@ if (LINUX)
     list(APPEND SYNTH2_LINK_LIBRARIES m)
 endif()
 
+# Generate dummy source file for header-only files
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/voice.c" "")
+
 add_library(synth2-core STATIC
     adsr.c
     ext/audio-ports.c
     ext/note-ports.c
     ext/params.c
     factory/plugin-factory.c
+    filter.c
     helper.c
     osc.c
     osc/wave-generator.c
@@ -16,6 +20,7 @@ add_library(synth2-core STATIC
     plugin.c
     process-event.c
     render-audio.c
+    voice.c
 )
 target_include_directories(synth2-core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(synth2-core PUBLIC ${SYNTH2_LINK_LIBRARIES})

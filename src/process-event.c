@@ -15,16 +15,17 @@
 #include "synth2/process-event.h"
 
 #include "synth2/adsr.h"
+#include "synth2/filter.h"
 #include "synth2/helper.h"
 #include "synth2/osc.h"
 #include "synth2/params.h"
 
 static inline double convert_amp_a(const synth2_params_amp_t *amp) {
-    return ((double)amp->a / 128.0) * 2.0 + 0.005;
+    return ((double)amp->a / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_amp_d(const synth2_params_amp_t *amp) {
-    return ((double)amp->d / 128.0) * 2.0 + 0.005;
+    return ((double)amp->d / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_amp_s(const synth2_params_amp_t *amp) {
@@ -32,11 +33,31 @@ static inline double convert_amp_s(const synth2_params_amp_t *amp) {
 }
 
 static inline double convert_amp_r(const synth2_params_amp_t *amp) {
-    return ((double)amp->r / 128.0) * 2.0 + 0.005;
+    return ((double)amp->r / 128.0) * 2.0 + 0.05;
+}
+
+static inline double convert_filter_a(const synth2_params_filter_t *filter) {
+    return ((double)filter->a / 128.0) * 2.0 + 0.05;
+}
+
+static inline double convert_filter_d(const synth2_params_filter_t *filter) {
+    return ((double)filter->d / 128.0) * 2.0 + 0.05;
+}
+
+static inline double convert_filter_s(const synth2_params_filter_t *filter) {
+    return (double)filter->s / 128.0;
+}
+
+static inline double convert_filter_r(const synth2_params_filter_t *filter) {
+    return ((double)filter->r / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_duty(uint8_t duty) {
     return ((double)duty / 128.0) * 0.875 + 0.125;
+}
+
+static inline double convert_filter_freq(double sample_rate, uint8_t freq) {
+    return k2f(freq);
 }
 
 static void init_voice(
@@ -48,6 +69,7 @@ static void init_voice(
     const synth2_params_osc2_t *osc2 = &plugin->params.osc2;
     const synth2_params_oscs_t *oscs = &plugin->params.oscs;
     const synth2_params_amp_t *amp = &plugin->params.amp;
+    const synth2_params_filter_t *filter = &plugin->params.filter;
 
     const double osc1_freq = k2f(note->key);
     const double osc1_duty = convert_duty(osc1->duty);
@@ -62,6 +84,22 @@ static void init_voice(
     const double amp_s = convert_amp_s(amp);
     const double amp_r = convert_amp_r(amp);
     synth2_adsr_init(&voice->amp, plugin->sample_rate, amp_a, amp_d, amp_s, amp_r);
+
+    const double filter_a = convert_filter_a(filter);
+    const double filter_d = convert_filter_d(filter);
+    const double filter_s = convert_filter_s(filter);
+    const double filter_r = convert_filter_r(filter);
+    synth2_adsr_init(
+        &voice->filter_adsr, plugin->sample_rate, filter_a, filter_d, filter_s, filter_r
+    );
+
+    const double filter_freq =
+        convert_filter_freq(plugin->sample_rate, plugin->params.filter.freq);
+    const double filter_res = (double)plugin->params.filter.res / 128.0;
+    synth2_filter_init(
+        &voice->filter, plugin->params.filter.type, plugin->sample_rate, filter_freq,
+        filter_res
+    );
 }
 
 /// Find unused voice, or oldest voice if all voice used.
@@ -105,6 +143,7 @@ void synth2_process_event(synth2_plugin_t *plugin, const clap_event_header_t *ev
 
             voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
             synth2_adsr_keyoff(&voice->amp);
+            synth2_adsr_keyoff(&voice->filter_adsr);
             break;
         }
     } else if (event->type == CLAP_EVENT_PARAM_VALUE) {
