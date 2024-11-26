@@ -18,13 +18,14 @@
 #include <clap/ext/params.h>
 #include <stdint.h>
 
+#include "synth2/filter.h"
 #include "synth2/osc/wave.h"
 
-#define SYNTH2_NUM_PARAMS 12
+#define SYNTH2_NUM_PARAMS (SYNTH2_PARAM_ID_MAX + 1)
 
 /// ID for each parameters.
 typedef enum synth2_param_id {
-    SYNTH2_PARAM_ID_OSC1_WAVE = 0,
+    SYNTH2_PARAM_ID_OSC1_WAVE,
     SYNTH2_PARAM_ID_OSC1_DUTY,
     SYNTH2_PARAM_ID_OSC2_WAVE,
     SYNTH2_PARAM_ID_OSC2_DUTY,
@@ -36,6 +37,16 @@ typedef enum synth2_param_id {
     SYNTH2_PARAM_ID_AMP_S,
     SYNTH2_PARAM_ID_AMP_R,
     SYNTH2_PARAM_ID_AMP_GAIN,
+    SYNTH2_PARAM_ID_FILTER_TYPE,
+    SYNTH2_PARAM_ID_FILTER_A,
+    SYNTH2_PARAM_ID_FILTER_D,
+    SYNTH2_PARAM_ID_FILTER_S,
+    SYNTH2_PARAM_ID_FILTER_R,
+    SYNTH2_PARAM_ID_FILTER_AMT,
+    SYNTH2_PARAM_ID_FILTER_FREQ,
+    SYNTH2_PARAM_ID_FILTER_RES,
+    SYNTH2_PARAM_ID_MIN = SYNTH2_PARAM_ID_OSC1_WAVE,
+    SYNTH2_PARAM_ID_MAX = SYNTH2_PARAM_ID_FILTER_RES,
 } synth2_param_id_t;
 
 typedef struct synth2_params_osc1 {
@@ -59,11 +70,19 @@ typedef struct synth2_params_amp {
     uint8_t gain;        // 0..=128
 } synth2_params_amp_t;
 
+typedef struct synth2_params_filter {
+    synth2_filter_type_t type;
+    uint8_t a, d, s, r;  // 0..=128
+    int8_t amt;          // -64..=64
+    uint8_t freq, res;   // 0..=128
+} synth2_params_filter_t;
+
 typedef struct synth2_params {
     synth2_params_osc1_t osc1;
     synth2_params_osc2_t osc2;
     synth2_params_oscs_t oscs;
     synth2_params_amp_t amp;
+    synth2_params_filter_t filter;
 } synth2_params_t;
 
 extern const synth2_params_t synth2_params_default_value;

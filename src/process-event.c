@@ -15,6 +15,7 @@
 #include "synth2/process-event.h"
 
 #include "synth2/adsr.h"
+#include "synth2/filter.h"
 #include "synth2/helper.h"
 #include "synth2/osc.h"
 #include "synth2/params.h"
@@ -37,6 +38,10 @@ static inline double convert_amp_r(const synth2_params_amp_t *amp) {
 
 static inline double convert_duty(uint8_t duty) {
     return ((double)duty / 128.0) * 0.875 + 0.125;
+}
+
+static inline double convert_filter_freq(double sample_rate, uint8_t freq) {
+    return k2f(freq);
 }
 
 static void init_voice(
@@ -62,6 +67,14 @@ static void init_voice(
     const double amp_s = convert_amp_s(amp);
     const double amp_r = convert_amp_r(amp);
     synth2_adsr_init(&voice->amp, plugin->sample_rate, amp_a, amp_d, amp_s, amp_r);
+
+    const double filter_freq =
+        convert_filter_freq(plugin->sample_rate, plugin->params.filter.freq);
+    const double filter_res = (double)plugin->params.filter.res / 128.0;
+    synth2_filter_init(
+        &voice->filter, plugin->params.filter.type, plugin->sample_rate, filter_freq,
+        filter_res
+    );
 }
 
 /// Find unused voice, or oldest voice if all voice used.

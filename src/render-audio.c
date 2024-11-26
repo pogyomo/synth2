@@ -15,6 +15,7 @@
 #include "synth2/render-audio.h"
 
 #include "synth2/adsr.h"
+#include "synth2/filter.h"
 
 static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
     const double amp =
@@ -23,7 +24,8 @@ static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voic
     const double osc2 = synth2_osc_sample(&voice->osc2);
     const double osc2_mix = (double)plugin->params.oscs.mix / 128.0;
     const double osc1_mix = 1.0 - osc2_mix;
-    return (osc1 * osc1_mix + osc2 * osc2_mix) * amp;
+    const double mixed = (osc1 * osc1_mix + osc2 * osc2_mix) * amp;
+    return synth2_filter_process(&voice->filter, mixed);
 }
 
 static double render_audio(synth2_plugin_t *plugin) {

@@ -22,6 +22,7 @@ const synth2_params_t synth2_params_default_value = {
     {SYNTH2_OSC_WAVE_SINE, 128, 0, 0},
     {64},
     {0, 0, 128, 0, 64},
+    {SYNTH2_FILTER_LP, 0, 0, 128, 0, 0, 128, 0},
 };
 
 bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
@@ -136,6 +137,78 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->max_value = 128;
             info->default_value = params->amp.gain;
             return true;
+        case SYNTH2_PARAM_ID_FILTER_TYPE:
+            info->id = param_index;
+            info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
+            strncpy(info->name, "Type", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = SYNTH2_FILTER_MIN;
+            info->max_value = SYNTH2_FILTER_MAX;
+            info->default_value = params->filter.type;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_A:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "A", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->filter.a;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_D:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "D", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->filter.d;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_S:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "S", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->filter.s;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_R:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "R", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->filter.r;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_AMT:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Amt", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = -64;
+            info->max_value = 64;
+            info->default_value = params->filter.amt;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_FREQ:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Freq", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->filter.freq;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_RES:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Res", sizeof(info->name));
+            strncpy(info->module, "Filter", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->filter.res;
+            return true;
         default:
             return false;
     }
@@ -183,6 +256,30 @@ bool synth2_params_get_value(
         case SYNTH2_PARAM_ID_AMP_GAIN:
             *out_value = params->amp.gain;
             return true;
+        case SYNTH2_PARAM_ID_FILTER_TYPE:
+            *out_value = params->filter.type;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_A:
+            *out_value = params->filter.a;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_D:
+            *out_value = params->filter.d;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_S:
+            *out_value = params->filter.s;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_R:
+            *out_value = params->filter.r;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_AMT:
+            *out_value = params->filter.amt;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_FREQ:
+            *out_value = params->filter.freq;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_RES:
+            *out_value = params->filter.res;
+            return true;
         default:
             return false;
     }
@@ -211,6 +308,19 @@ bool synth2_params_value_to_text(
                     strncpy(out_buffer, "Square", out_buffer_capacity);
                     return true;
             }
+        case SYNTH2_PARAM_ID_FILTER_TYPE:
+            switch ((synth2_filter_type_t)value) {
+                case SYNTH2_FILTER_LP:
+                    strncpy(out_buffer, "LP", out_buffer_capacity);
+                    return true;
+                case SYNTH2_FILTER_BP:
+                    strncpy(out_buffer, "BP", out_buffer_capacity);
+                    return true;
+                default:  // SYNTH2_FILTER_HP
+                    strncpy(out_buffer, "HP", out_buffer_capacity);
+                    return true;
+            }
+            return true;
         case SYNTH2_PARAM_ID_OSC1_DUTY:
         case SYNTH2_PARAM_ID_OSC2_DUTY:
         case SYNTH2_PARAM_ID_OSC2_PITCH:
@@ -221,6 +331,13 @@ bool synth2_params_value_to_text(
         case SYNTH2_PARAM_ID_AMP_S:
         case SYNTH2_PARAM_ID_AMP_R:
         case SYNTH2_PARAM_ID_AMP_GAIN:
+        case SYNTH2_PARAM_ID_FILTER_A:
+        case SYNTH2_PARAM_ID_FILTER_D:
+        case SYNTH2_PARAM_ID_FILTER_S:
+        case SYNTH2_PARAM_ID_FILTER_R:
+        case SYNTH2_PARAM_ID_FILTER_AMT:
+        case SYNTH2_PARAM_ID_FILTER_FREQ:
+        case SYNTH2_PARAM_ID_FILTER_RES:
             snprintf(out_buffer, out_buffer_capacity, "%d", (int)value);
             return true;
         default:
@@ -277,6 +394,30 @@ bool synth2_params_update(
             return true;
         case SYNTH2_PARAM_ID_AMP_GAIN:
             params->amp.gain = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_TYPE:
+            params->filter.type = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_A:
+            params->filter.a = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_D:
+            params->filter.d = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_S:
+            params->filter.s = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_R:
+            params->filter.r = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_AMT:
+            params->filter.amt = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_FREQ:
+            params->filter.freq = value;
+            return true;
+        case SYNTH2_PARAM_ID_FILTER_RES:
+            params->filter.res = value;
             return true;
         default:
             return false;
