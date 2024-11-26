@@ -218,4 +218,5 @@ TEST_GROUP_RUNNER(adsr) {
     RUN_TEST_CASE(adsr, immediate_d);
     RUN_TEST_CASE(adsr, immediate_ad);
     RUN_TEST_CASE(adsr, immediate_adr);
+    RUN_TEST_CASE(adsr, multiple_keyoff);
 }
