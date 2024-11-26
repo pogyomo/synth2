@@ -34,6 +34,7 @@ void synth2_adsr_init(
     adsr->d = d;
     adsr->s = s;
     adsr->r = r;
+    adsr->top = 0.0;
     adsr->t = 0;
     adsr->keyoff = false;
 }
@@ -69,15 +70,15 @@ double synth2_adsr_sample(synth2_adsr_t* adsr) {
 
     if (!adsr->keyoff) {
         if (t < adsr->a) {
-            return (1.0 / adsr->a) * t;
+            return adsr->top = (1.0 / adsr->a) * t;
         } else if (t < adsr->a + adsr->d) {
-            return 1.0 - ((1.0 - adsr->s) / adsr->d) * (t - adsr->a);
+            return adsr->top = 1.0 - ((1.0 - adsr->s) / adsr->d) * (t - adsr->a);
         } else {
-            return adsr->s;
+            return adsr->top = adsr->s;
         }
     } else {
         if (t < adsr->r) {
-            return adsr->s - (adsr->s / adsr->r) * t;
+            return adsr->top - (adsr->top / adsr->r) * t;
         } else {
             return 0.0;
         }

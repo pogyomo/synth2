@@ -31,6 +31,7 @@ typedef enum synth2_adsr_stage {
 typedef struct synth2_adsr {
     double sample_rate;
     double a, d, s, r;
+    double top;
     uint64_t t;
     bool keyoff;
 } synth2_adsr_t;
