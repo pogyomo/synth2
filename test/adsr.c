@@ -209,6 +209,37 @@ TEST(adsr, multiple_keyoff) {
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
 }
 
+TEST(adsr, keyoff_before_s) {
+    synth2_adsr_t adsr;
+    synth2_adsr_init(&adsr, 5, 1.0, 1.0, 0.5, 1.0);
+
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.2, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.4, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.6, synth2_adsr_sample(&adsr));
+
+    synth2_adsr_keyoff(&adsr);
+
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_R, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.6, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_R, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.48, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_R, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.36, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_R, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.24, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_R, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.12, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_END, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
+    TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_END, synth2_adsr_current_stage(&adsr));
+    TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
+}
+
 TEST_GROUP_RUNNER(adsr) {
     RUN_TEST_CASE(adsr, normal);
     RUN_TEST_CASE(adsr, stage_changes_between_sample);
@@ -217,4 +248,5 @@ TEST_GROUP_RUNNER(adsr) {
     RUN_TEST_CASE(adsr, immediate_ad);
     RUN_TEST_CASE(adsr, immediate_adr);
     RUN_TEST_CASE(adsr, multiple_keyoff);
+    RUN_TEST_CASE(adsr, keyoff_before_s)
 }
