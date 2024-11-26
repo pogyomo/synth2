@@ -15,8 +15,6 @@
 #include <synth2/adsr.h>
 #include <unity_fixture.h>
 
-#include "unity.h"
-
 #define DELTA 1e-10
 
 TEST_GROUP(adsr);
