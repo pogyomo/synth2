@@ -8,6 +8,14 @@ enable_testing()
 set(UNITY_EXTENSION_FIXTURE ON)
 add_compile_definitions(UNITY_INCLUDE_DOUBLE)
 
+if (MSVC)
+    add_compile_options(
+        # Disable warnings from unity
+        /wd4820
+        /wd5045
+    )
+endif()
+
 add_subdirectory(libs/clap)
 add_subdirectory(libs/unity)
 add_subdirectory(src)
