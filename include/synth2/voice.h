@@ -53,6 +53,7 @@ typedef struct synth2_voice {
     synth2_osc_t osc1;
     synth2_osc_t osc2;
     synth2_adsr_t amp;
+    synth2_adsr_t filter_adsr;
     synth2_filter_t filter;
 
     // Derived from clap_event_note_t.

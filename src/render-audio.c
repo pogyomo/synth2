@@ -16,6 +16,17 @@
 
 #include "synth2/adsr.h"
 #include "synth2/filter.h"
+#include "synth2/helper.h"
+
+static int16_t clamp(int16_t value, int16_t min_value, int16_t max_value) {
+    if (value < min_value) {
+        return min_value;
+    } else if (value > max_value) {
+        return max_value;
+    } else {
+        return value;
+    }
+}
 
 static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
     const double amp =
@@ -25,7 +36,14 @@ static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voic
     const double osc2_mix = (double)plugin->params.oscs.mix / 128.0;
     const double osc1_mix = 1.0 - osc2_mix;
     const double mixed = (osc1 * osc1_mix + osc2 * osc2_mix) * amp;
-    return synth2_filter_process(&voice->filter, mixed);
+    const double res = synth2_filter_process(&voice->filter, mixed);
+
+    const int16_t next_freq =
+        synth2_adsr_sample(&voice->filter_adsr) * plugin->params.filter.amt * 2 +
+        plugin->params.filter.freq;
+    synth2_filter_set_freq(&voice->filter, k2f(clamp(next_freq, 0, 128)));
+
+    return res;
 }
 
 static double render_audio(synth2_plugin_t *plugin) {

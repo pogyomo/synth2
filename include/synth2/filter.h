@@ -24,7 +24,8 @@ typedef enum synth2_filter_type {
 } synth2_filter_type_t;
 
 typedef struct synth2_filter {
-    double sample_rate;
+    synth2_filter_type_t type;
+    double sample_rate, freq, res;
     double a0, a1, a2;
     double b0, b1, b2;
     double in1, out1;
@@ -43,5 +44,8 @@ void synth2_filter_init(
 
 /// Filter given signal.
 double synth2_filter_process(synth2_filter_t *filter, double signal);
+
+/// Set frequencey.
+void synth2_filter_set_freq(synth2_filter_t *filter, double freq);
 
 #endif  // SYNTH2_FILTER_H_

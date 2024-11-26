@@ -16,8 +16,9 @@
 // - https://www.utsbox.com/?page_id=523
 // - https://www.w3.org/TR/audio-eq-cookbook/
 
+#include "synth2/filter.h"
+
 #include <math.h>
-#include <synth2/filter.h>
 
 #include "synth2/macros.h"
 
@@ -30,9 +31,9 @@ static inline double res2bw(double res) {
     return 1.7 * res + 0.3;
 }
 
-static void init_params_lp(synth2_filter_t *filter, double freq, double res) {
-    const double omega = 2.0 * PI * freq / filter->sample_rate;
-    const double alpha = sin(omega) / (2.0 * res2q(res));
+static void init_params_lp(synth2_filter_t *filter) {
+    const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
+    const double alpha = sin(omega) / (2.0 * res2q(filter->res));
     filter->a0 = 1.0 + alpha;
     filter->a1 = -2.0 * cos(omega);
     filter->a2 = 1.0 - alpha;
@@ -41,9 +42,9 @@ static void init_params_lp(synth2_filter_t *filter, double freq, double res) {
     filter->b2 = (1.0 - cos(omega)) / 2.0;
 }
 
-static void init_params_bp(synth2_filter_t *filter, double freq, double res) {
-    const double omega = 2.0 * PI * freq / filter->sample_rate;
-    const double alpha = sin(omega) / (2.0 * res2q(res));
+static void init_params_bp(synth2_filter_t *filter) {
+    const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
+    const double alpha = sin(omega) / (2.0 * res2q(filter->res));
     filter->a0 = 1.0 + alpha;
     filter->a1 = -2.0 * cos(omega);
     filter->a2 = 1.0 - alpha;
@@ -52,9 +53,9 @@ static void init_params_bp(synth2_filter_t *filter, double freq, double res) {
     filter->b2 = -alpha;
 }
 
-static void init_params_hp(synth2_filter_t *filter, double freq, double res) {
-    const double omega = 2.0 * PI * freq / filter->sample_rate;
-    const double alpha = sin(omega) / (2.0 * res2q(res));
+static void init_params_hp(synth2_filter_t *filter) {
+    const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
+    const double alpha = sin(omega) / (2.0 * res2q(filter->res));
     filter->a0 = 1.0 + alpha;
     filter->a1 = -2.0 * cos(omega);
     filter->a2 = 1.0 - alpha;
@@ -70,18 +71,21 @@ void synth2_filter_init(
     double freq,
     double res
 ) {
+    filter->type = type;
     filter->sample_rate = sample_rate;
+    filter->freq = freq;
+    filter->res = res;
     filter->in1 = filter->out1 = 0.0;
     filter->in2 = filter->out2 = 0.0;
     switch (type) {
         case SYNTH2_FILTER_LP:
-            init_params_lp(filter, freq, res);
+            init_params_lp(filter);
             break;
         case SYNTH2_FILTER_BP:
-            init_params_bp(filter, freq, res);
+            init_params_bp(filter);
             break;
         default:  // SYNTH2_FILTER_HP
-            init_params_hp(filter, freq, res);
+            init_params_hp(filter);
             break;
     }
 }
@@ -98,4 +102,19 @@ double synth2_filter_process(synth2_filter_t *filter, double signal) {
     filter->out2 = filter->out1;
     filter->out1 = output;
     return output;
+}
+
+void synth2_filter_set_freq(synth2_filter_t *filter, double freq) {
+    filter->freq = freq;
+    switch (filter->type) {
+        case SYNTH2_FILTER_LP:
+            init_params_lp(filter);
+            break;
+        case SYNTH2_FILTER_BP:
+            init_params_bp(filter);
+            break;
+        default:  // SYNTH2_FILTER_HP
+            init_params_hp(filter);
+            break;
+    }
 }
