@@ -36,14 +36,13 @@ static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voic
     const double osc2_mix = (double)plugin->params.oscs.mix / 128.0;
     const double osc1_mix = 1.0 - osc2_mix;
     const double mixed = (osc1 * osc1_mix + osc2 * osc2_mix) * amp;
-    const double res = synth2_filter_process(&voice->filter, mixed);
 
-    const int16_t next_freq =
+    const int16_t freq =
         synth2_adsr_sample(&voice->filter_adsr) * plugin->params.filter.amt * 2 +
         plugin->params.filter.freq;
-    synth2_filter_set_freq(&voice->filter, k2f(clamp(next_freq, 0, 128)));
+    synth2_filter_set_freq(&voice->filter, k2f(clamp(freq, 0, 128)));
 
-    return res;
+    return synth2_filter_process(&voice->filter, mixed);
 }
 
 static double render_audio(synth2_plugin_t *plugin) {

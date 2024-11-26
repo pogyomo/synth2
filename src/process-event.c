@@ -21,11 +21,11 @@
 #include "synth2/params.h"
 
 static inline double convert_amp_a(const synth2_params_amp_t *amp) {
-    return ((double)amp->a / 128.0) * 2.0 + 0.005;
+    return ((double)amp->a / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_amp_d(const synth2_params_amp_t *amp) {
-    return ((double)amp->d / 128.0) * 2.0 + 0.005;
+    return ((double)amp->d / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_amp_s(const synth2_params_amp_t *amp) {
@@ -33,15 +33,15 @@ static inline double convert_amp_s(const synth2_params_amp_t *amp) {
 }
 
 static inline double convert_amp_r(const synth2_params_amp_t *amp) {
-    return ((double)amp->r / 128.0) * 2.0 + 0.005;
+    return ((double)amp->r / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_filter_a(const synth2_params_filter_t *filter) {
-    return ((double)filter->a / 128.0) * 2.0 + 0.005;
+    return ((double)filter->a / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_filter_d(const synth2_params_filter_t *filter) {
-    return ((double)filter->d / 128.0) * 2.0 + 0.005;
+    return ((double)filter->d / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_filter_s(const synth2_params_filter_t *filter) {
@@ -49,7 +49,7 @@ static inline double convert_filter_s(const synth2_params_filter_t *filter) {
 }
 
 static inline double convert_filter_r(const synth2_params_filter_t *filter) {
-    return ((double)filter->r / 128.0) * 2.0 + 0.005;
+    return ((double)filter->r / 128.0) * 2.0 + 0.05;
 }
 
 static inline double convert_duty(uint8_t duty) {
