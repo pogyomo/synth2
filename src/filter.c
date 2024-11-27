@@ -27,10 +27,6 @@ static inline double res2q(double res) {
     return res * (4.0 - base) + base;
 }
 
-static inline double res2bw(double res) {
-    return 1.7 * res + 0.3;
-}
-
 static void init_params_lp(synth2_filter_t *filter) {
     const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
     const double alpha = sin(omega) / (2.0 * res2q(filter->res));
