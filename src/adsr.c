@@ -64,24 +64,31 @@ synth2_adsr_stage_t synth2_adsr_current_stage(const synth2_adsr_t* adsr) {
     }
 }
 
+static double sample_keyon(synth2_adsr_t* adsr, const double t) {
+    if (t < adsr->a) {
+        return adsr->top = (1.0 / adsr->a) * t;
+    } else if (t < adsr->a + adsr->d) {
+        return adsr->top = 1.0 - ((1.0 - adsr->s) / adsr->d) * (t - adsr->a);
+    } else {
+        return adsr->top = adsr->s;
+    }
+}
+
+static double sample_keyoff(synth2_adsr_t* adsr, const double t) {
+    if (t < adsr->r) {
+        return adsr->top - (adsr->top / adsr->r) * t;
+    } else {
+        return 0.0;
+    }
+}
+
 double synth2_adsr_sample(synth2_adsr_t* adsr) {
     const double t = physical_time(adsr);
     adsr->t++;
-
-    if (!adsr->keyoff) {
-        if (t < adsr->a) {
-            return adsr->top = (1.0 / adsr->a) * t;
-        } else if (t < adsr->a + adsr->d) {
-            return adsr->top = 1.0 - ((1.0 - adsr->s) / adsr->d) * (t - adsr->a);
-        } else {
-            return adsr->top = adsr->s;
-        }
+    if (adsr->keyoff) {
+        return sample_keyoff(adsr, t);
     } else {
-        if (t < adsr->r) {
-            return adsr->top - (adsr->top / adsr->r) * t;
-        } else {
-            return 0.0;
-        }
+        return sample_keyon(adsr, t);
     }
 }
 

@@ -18,12 +18,18 @@
 #include "synth2/osc/wave.h"
 
 /// The wave generation function. Accept following arguments.
-/// 1. phase: position in one-cycle wave. Must be in [0, 2π).
-/// 2. prev:  previously sampled value.
-/// 3. duty:  duty of the wave, but is maybe unused.
-typedef double (*synth2_osc_wave_generator)(double phase, double prev, double duty);
+/// - phase: position in one-cycle wave. Must be in [0, 2π).
+/// - prev:  previously sampled value.
+/// - duty:  duty of the wave, but is maybe unused.
+typedef double (*synth2_osc_wave_generator)(
+    double phase,
+    double prev,
+    double duty
+);
 
 /// Returns wave_generator based on wave type.
-synth2_osc_wave_generator synth2_osc_get_wave_generator(synth2_osc_wave_t wave);
+synth2_osc_wave_generator synth2_osc_wave_generator_by_wave(
+    synth2_osc_wave_t wave
+);
 
 #endif  // SYNTH2_OSC_WAVE_GENERATOR_H_

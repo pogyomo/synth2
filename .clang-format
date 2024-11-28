@@ -6,5 +6,11 @@ AllowShortFunctionsOnASingleLine: Empty
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackParameters: false
 AlignAfterOpenBracket: BlockIndent
-IndentPPDirectives: AfterHash
-ColumnLimit: 90
+IndentPPDirectives: BeforeHash
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+PenaltyReturnTypeOnItsOwnLine: 1000
+PenaltyBreakAssignment: 1000
+QualifierAlignment: Custom
+QualifierOrder: [static, inline, const, volatile, restrict, type]
+ColumnLimit: 80

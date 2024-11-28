@@ -29,8 +29,9 @@ static bool note_ports_get(
     if (!is_input || index > 0) return false;
 
     info->id = 0;
-    info->supported_dialects =
-        CLAP_NOTE_DIALECT_CLAP | CLAP_NOTE_DIALECT_MIDI_MPE | CLAP_NOTE_DIALECT_MIDI2;
+    info->supported_dialects = CLAP_NOTE_DIALECT_CLAP |
+                               CLAP_NOTE_DIALECT_MIDI_MPE |
+                               CLAP_NOTE_DIALECT_MIDI2;
     info->preferred_dialect = CLAP_NOTE_DIALECT_CLAP;
     strncpy(info->name, "", sizeof(info->name));
     return true;

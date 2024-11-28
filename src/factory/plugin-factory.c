@@ -18,7 +18,9 @@
 
 #include "synth2/plugin.h"
 
-static uint32_t plugin_factory_get_plugin_count(const clap_plugin_factory_t *factory) {
+static uint32_t plugin_factory_get_plugin_count(
+    const clap_plugin_factory_t *factory
+) {
     return 1;
 }
 

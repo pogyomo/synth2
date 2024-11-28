@@ -24,13 +24,19 @@ static uint32_t params_count(const clap_plugin_t *plugin) {
     return SYNTH2_NUM_PARAMS;
 }
 
-static bool
-params_get_info(const clap_plugin_t *plugin, uint32_t index, clap_param_info_t *info) {
+static bool params_get_info(
+    const clap_plugin_t *plugin,
+    uint32_t index,
+    clap_param_info_t *info
+) {
     return synth2_params_get_info(index, info);
 }
 
-static bool
-params_get_value(const clap_plugin_t *plugin, clap_id param_id, double *out_value) {
+static bool params_get_value(
+    const clap_plugin_t *plugin,
+    clap_id param_id,
+    double *out_value
+) {
     const synth2_plugin_t *plug = plugin->plugin_data;
     return synth2_params_get_value(&plug->params, param_id, out_value);
 }
@@ -42,7 +48,9 @@ static bool params_value_to_text(
     char *out_buffer,
     uint32_t out_buffer_capacity
 ) {
-    return synth2_params_value_to_text(param_id, value, out_buffer, out_buffer_capacity);
+    return synth2_params_value_to_text(
+        param_id, value, out_buffer, out_buffer_capacity
+    );
 }
 
 static bool params_text_to_value(

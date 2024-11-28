@@ -18,6 +18,9 @@
 #include "synth2/plugin.h"
 
 /// Process given event.
-void synth2_process_event(synth2_plugin_t *plugin, const clap_event_header_t *event);
+void synth2_process_event(
+    synth2_plugin_t *plugin,
+    const clap_event_header_t *event
+);
 
 #endif  // SYNTH2_PROCESS_EVENT_H_
