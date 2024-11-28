@@ -60,6 +60,22 @@ static inline double convert_filter_freq(double sample_rate, uint8_t freq) {
     return k2f(freq, 0);
 }
 
+static double convert_osc1_freq(const synth2_params_osc1_t *osc1, int16_t key) {
+    if (osc1->track) {
+        return k2f(69, 0);
+    } else {
+        return k2f(key + osc1->pitch, osc1->cent);
+    }
+}
+
+static double convert_osc2_freq(const synth2_params_osc2_t *osc2, int16_t key) {
+    if (osc2->track) {
+        return k2f(69, 0);
+    } else {
+        return k2f(key + osc2->pitch, osc2->cent);
+    }
+}
+
 static void init_voice(
     synth2_voice_t *voice,
     synth2_plugin_t *plugin,
@@ -71,13 +87,13 @@ static void init_voice(
     const synth2_params_amp_t *amp = &plugin->params.amp;
     const synth2_params_filter_t *filter = &plugin->params.filter;
 
-    const double osc1_freq = k2f(note->key, 0);
+    const double osc1_freq = convert_osc1_freq(osc1, note->key);
     const double osc1_duty = convert_duty(osc1->duty);
     synth2_osc_init(
         &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty
     );
 
-    const double osc2_freq = k2f(note->key + osc2->pitch, osc2->cent);
+    const double osc2_freq = convert_osc2_freq(osc2, note->key);
     const double osc2_duty = convert_duty(osc2->duty);
     synth2_osc_init(
         &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty
