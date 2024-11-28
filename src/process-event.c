@@ -100,8 +100,9 @@ static void init_voice(
         filter_r
     );
 
-    const double filter_freq =
-        convert_filter_freq(plugin->sample_rate, plugin->params.filter.freq);
+    const double filter_freq = convert_filter_freq(
+        plugin->sample_rate, plugin->params.filter.freq
+    );
     const double filter_res = (double)plugin->params.filter.res / 128.0;
     synth2_filter_init(
         &voice->filter, plugin->params.filter.type, plugin->sample_rate,
@@ -125,8 +126,10 @@ static size_t find_useable_voice_idx(synth2_voice_t *voices) {
     return min_idx;
 }
 
-static void
-process_note_on(synth2_plugin_t *plugin, const clap_event_note_t *note) {
+static void process_note_on(
+    synth2_plugin_t *plugin,
+    const clap_event_note_t *note
+) {
     size_t voice_idx = find_useable_voice_idx(plugin->voices);
     synth2_voice_t *voice = &plugin->voices[voice_idx];
     voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
@@ -137,8 +140,10 @@ process_note_on(synth2_plugin_t *plugin, const clap_event_note_t *note) {
     init_voice(voice, plugin, note);
 }
 
-static void
-process_note_off(synth2_plugin_t *plugin, const clap_event_note_t *note) {
+static void process_note_off(
+    synth2_plugin_t *plugin,
+    const clap_event_note_t *note
+) {
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_voice_t *voice = &plugin->voices[i];
         if (voice->state != SYNTH2_PLUGIN_VOICE_HOLDING) continue;
@@ -153,6 +158,14 @@ process_note_off(synth2_plugin_t *plugin, const clap_event_note_t *note) {
     }
 }
 
+static void process_param_value(
+    synth2_plugin_t *plugin,
+    const clap_event_param_value_t *value
+) {
+    // TODO: Need mutex for changing parameters?
+    synth2_params_update(&plugin->params, value->param_id, value->value);
+}
+
 void synth2_process_event(
     synth2_plugin_t *plugin,
     const clap_event_header_t *event
@@ -160,15 +173,10 @@ void synth2_process_event(
     if (event->space_id != CLAP_CORE_EVENT_SPACE_ID) return;
 
     if (event->type == CLAP_EVENT_NOTE_ON) {
-        const clap_event_note_t *note = (const clap_event_note_t *)event;
-        process_note_on(plugin, note);
+        process_note_on(plugin, (clap_event_note_t *)event);
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
-        const clap_event_note_t *note = (const clap_event_note_t *)event;
-        process_note_off(plugin, note);
+        process_note_off(plugin, (clap_event_note_t *)event);
     } else if (event->type == CLAP_EVENT_PARAM_VALUE) {
-        // TODO: Need mutex for changing parameters?
-        const clap_event_param_value_t *value =
-            (clap_event_param_value_t *)event;
-        synth2_params_update(&plugin->params, value->param_id, value->value);
+        process_param_value(plugin, (clap_event_param_value_t *)event);
     }
 }

@@ -18,8 +18,11 @@
 #include "synth2/filter.h"
 #include "synth2/helper.h"
 
-static inline int16_t
-clamp(int16_t value, int16_t min_value, int16_t max_value) {
+static inline int16_t clamp(
+    int16_t value,
+    int16_t min_value,
+    int16_t max_value
+) {
     if (value < min_value) {
         return min_value;
     } else if (value > max_value) {
@@ -29,8 +32,10 @@ clamp(int16_t value, int16_t min_value, int16_t max_value) {
     }
 }
 
-static inline double
-process_oscs(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
+static inline double process_oscs(
+    const synth2_plugin_t *plugin,
+    synth2_voice_t *voice
+) {
     const double osc1 = synth2_osc_sample(&voice->osc1);
     const double osc2 = synth2_osc_sample(&voice->osc2);
     const double osc2_mix = (double)plugin->params.oscs.mix / 128.0;
@@ -39,8 +44,11 @@ process_oscs(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
     return mixed;
 }
 
-static inline double
-process_amp(const synth2_plugin_t *plugin, synth2_voice_t *voice, double in) {
+static inline double process_amp(
+    const synth2_plugin_t *plugin,
+    synth2_voice_t *voice,
+    double in
+) {
     const double sampled = synth2_adsr_sample(&voice->amp);
     const double level = sampled * ((double)plugin->params.amp.gain / 128.0);
     return level * in;
@@ -58,8 +66,10 @@ static inline double process_filter(
     return synth2_filter_process(&voice->filter, in);
 }
 
-static inline double
-generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
+static inline double generate_auido(
+    const synth2_plugin_t *plugin,
+    synth2_voice_t *voice
+) {
     double out = process_oscs(plugin, voice);
     out = process_amp(plugin, voice, out);
     return process_filter(plugin, voice, out);
@@ -76,8 +86,9 @@ static double render_audio(synth2_plugin_t *plugin) {
         }
 
         if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
-            const synth2_adsr_stage_t state =
-                synth2_adsr_current_stage(&voice->amp);
+            const synth2_adsr_stage_t state = synth2_adsr_current_stage(
+                &voice->amp
+            );
             if (state == SYNTH2_ADSR_STAGE_END) {
                 voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
             }

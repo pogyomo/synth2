@@ -70,8 +70,10 @@ static void plugin_reset(const clap_plugin_t *plugin) {
     return;
 }
 
-static clap_process_status
-plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
+static clap_process_status plugin_process(
+    const clap_plugin_t *plugin,
+    const clap_process_t *process
+) {
     synth2_plugin_t *plug = plugin->plugin_data;
 
     assert(process->audio_inputs_count == 0);
@@ -84,8 +86,9 @@ plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
 
     for (uint32_t i = 0; i < n_frames;) {
         while (event_index < n_in_events && next_event_frame == i) {
-            const clap_event_header_t *header =
-                process->in_events->get(process->in_events, event_index);
+            const clap_event_header_t *header = process->in_events->get(
+                process->in_events, event_index
+            );
             if (header->time != i) {
                 next_event_frame = header->time;
                 break;
@@ -134,8 +137,10 @@ plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
     return CLAP_PROCESS_CONTINUE;
 }
 
-static const void *
-plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
+static const void *plugin_get_extension(
+    const clap_plugin_t *plugin,
+    const char *id
+) {
     if (strcmp(id, CLAP_EXT_AUDIO_PORTS) == 0) {
         return &synth2_plugin_audio_ports;
     } else if (strcmp(id, CLAP_EXT_NOTE_PORTS) == 0) {
