@@ -30,7 +30,7 @@ void synth2_osc_init(
     osc->duty = duty;
     osc->phase = 0.0;
     osc->prev = 0.0;
-    osc->gen = synth2_osc_get_wave_generator(wave);
+    osc->gen = synth2_osc_wave_generator_by_wave(wave);
 }
 
 double synth2_osc_sample(synth2_osc_t* osc) {
@@ -41,7 +41,7 @@ double synth2_osc_sample(synth2_osc_t* osc) {
 }
 
 void synth2_osc_set_wave(synth2_osc_t* osc, synth2_osc_wave_t wave) {
-    osc->gen = synth2_osc_get_wave_generator(osc->wave = wave);
+    osc->gen = synth2_osc_wave_generator_by_wave(osc->wave = wave);
 }
 
 synth2_osc_wave_t synth2_osc_get_wave(const synth2_osc_t* osc) {

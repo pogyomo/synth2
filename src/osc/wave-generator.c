@@ -35,7 +35,9 @@ static double wave_generator_square(double x, double prev, double duty) {
     return x < PI * duty ? 1.0 : -1.0;
 }
 
-synth2_osc_wave_generator synth2_osc_get_wave_generator(synth2_osc_wave_t wave) {
+synth2_osc_wave_generator synth2_osc_wave_generator_by_wave(
+    synth2_osc_wave_t wave
+) {
     switch (wave) {
         case SYNTH2_OSC_WAVE_SINE:
             return wave_generator_sine;

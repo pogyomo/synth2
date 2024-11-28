@@ -28,18 +28,19 @@ static int16_t clamp(int16_t value, int16_t min_value, int16_t max_value) {
     }
 }
 
-static double generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
-    const double amp =
-        synth2_adsr_sample(&voice->amp) * ((double)plugin->params.amp.gain / 128.0);
+static double
+generate_auido(const synth2_plugin_t *plugin, synth2_voice_t *voice) {
+    const double amp = synth2_adsr_sample(&voice->amp) *
+                       ((double)plugin->params.amp.gain / 128.0);
     const double osc1 = synth2_osc_sample(&voice->osc1);
     const double osc2 = synth2_osc_sample(&voice->osc2);
     const double osc2_mix = (double)plugin->params.oscs.mix / 128.0;
     const double osc1_mix = 1.0 - osc2_mix;
     const double mixed = (osc1 * osc1_mix + osc2 * osc2_mix) * amp;
 
-    const int16_t freq =
-        synth2_adsr_sample(&voice->filter_adsr) * plugin->params.filter.amt * 2 +
-        plugin->params.filter.freq;
+    const int16_t diff =
+        synth2_adsr_sample(&voice->filter_adsr) * plugin->params.filter.amt * 2;
+    const int16_t freq = plugin->params.filter.freq + diff;
     synth2_filter_set_freq(&voice->filter, k2f(clamp(freq, 0, 128)));
 
     return synth2_filter_process(&voice->filter, mixed);
@@ -56,7 +57,8 @@ static double render_audio(synth2_plugin_t *plugin) {
         }
 
         if (voice->state == SYNTH2_PLUGIN_VOICE_RELEASE) {
-            const synth2_adsr_stage_t state = synth2_adsr_current_stage(&voice->amp);
+            const synth2_adsr_stage_t state =
+                synth2_adsr_current_stage(&voice->amp);
             if (state == SYNTH2_ADSR_STAGE_END) {
                 voice->state = SYNTH2_PLUGIN_VOICE_POST_PROCESS;
             }

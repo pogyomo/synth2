@@ -77,13 +77,13 @@ plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
     assert(process->audio_inputs_count == 0);
     assert(process->audio_outputs_count == 1);
 
-    const uint32_t frames_count = process->frames_count;
-    const uint32_t input_events_count = process->in_events->size(process->in_events);
+    const uint32_t n_frames = process->frames_count;
+    const uint32_t n_in_events = process->in_events->size(process->in_events);
     uint32_t event_index = 0;
-    uint32_t next_event_frame = input_events_count > 0 ? 0 : frames_count;
+    uint32_t next_event_frame = n_in_events > 0 ? 0 : n_frames;
 
-    for (uint32_t i = 0; i < frames_count;) {
-        while (event_index < input_events_count && next_event_frame == i) {
+    for (uint32_t i = 0; i < n_frames;) {
+        while (event_index < n_in_events && next_event_frame == i) {
             const clap_event_header_t *header =
                 process->in_events->get(process->in_events, event_index);
             if (header->time != i) {
@@ -94,18 +94,17 @@ plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
             synth2_process_event(plug, header);
             ++event_index;
 
-            if (event_index == input_events_count) {
-                next_event_frame = frames_count;
+            if (event_index == n_in_events) {
+                next_event_frame = n_frames;
                 break;
             }
         }
 
-        assert(process->audio_outputs[0].data32 || process->audio_outputs[0].data64);
         if (process->audio_outputs[0].data32) {
             float *outoutL = process->audio_outputs[0].data32[0];
             float *outoutR = process->audio_outputs[0].data32[1];
             synth2_render_audio_f(plug, i, next_event_frame, outoutL, outoutR);
-        } else {
+        } else if (process->audio_outputs[0].data64) {
             double *outoutL = process->audio_outputs[0].data64[0];
             double *outoutR = process->audio_outputs[0].data64[1];
             synth2_render_audio_d(plug, i, next_event_frame, outoutL, outoutR);
@@ -135,7 +134,8 @@ plugin_process(const clap_plugin_t *plugin, const clap_process_t *process) {
     return CLAP_PROCESS_CONTINUE;
 }
 
-static const void *plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
+static const void *
+plugin_get_extension(const clap_plugin_t *plugin, const char *id) {
     if (strcmp(id, CLAP_EXT_AUDIO_PORTS) == 0) {
         return &synth2_plugin_audio_ports;
     } else if (strcmp(id, CLAP_EXT_NOTE_PORTS) == 0) {

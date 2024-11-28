@@ -73,32 +73,39 @@ static void init_voice(
 
     const double osc1_freq = k2f(note->key);
     const double osc1_duty = convert_duty(osc1->duty);
-    synth2_osc_init(&voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty);
+    synth2_osc_init(
+        &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty
+    );
 
     const double osc2_freq = k2f(note->key + osc2->pitch) + (double)osc2->cent;
     const double osc2_duty = convert_duty(osc2->duty);
-    synth2_osc_init(&voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty);
+    synth2_osc_init(
+        &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty
+    );
 
     const double amp_a = convert_amp_a(amp);
     const double amp_d = convert_amp_d(amp);
     const double amp_s = convert_amp_s(amp);
     const double amp_r = convert_amp_r(amp);
-    synth2_adsr_init(&voice->amp, plugin->sample_rate, amp_a, amp_d, amp_s, amp_r);
+    synth2_adsr_init(
+        &voice->amp, plugin->sample_rate, amp_a, amp_d, amp_s, amp_r
+    );
 
     const double filter_a = convert_filter_a(filter);
     const double filter_d = convert_filter_d(filter);
     const double filter_s = convert_filter_s(filter);
     const double filter_r = convert_filter_r(filter);
     synth2_adsr_init(
-        &voice->filter_adsr, plugin->sample_rate, filter_a, filter_d, filter_s, filter_r
+        &voice->filter_adsr, plugin->sample_rate, filter_a, filter_d, filter_s,
+        filter_r
     );
 
     const double filter_freq =
         convert_filter_freq(plugin->sample_rate, plugin->params.filter.freq);
     const double filter_res = (double)plugin->params.filter.res / 128.0;
     synth2_filter_init(
-        &voice->filter, plugin->params.filter.type, plugin->sample_rate, filter_freq,
-        filter_res
+        &voice->filter, plugin->params.filter.type, plugin->sample_rate,
+        filter_freq, filter_res
     );
 }
 
@@ -118,37 +125,50 @@ static size_t find_useable_voice_idx(synth2_voice_t *voices) {
     return min_idx;
 }
 
-void synth2_process_event(synth2_plugin_t *plugin, const clap_event_header_t *event) {
+static void
+process_note_on(synth2_plugin_t *plugin, const clap_event_note_t *note) {
+    size_t voice_idx = find_useable_voice_idx(plugin->voices);
+    synth2_voice_t *voice = &plugin->voices[voice_idx];
+    voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
+    voice->note_id = note->note_id;
+    voice->channel = note->channel;
+    voice->key = note->key;
+    voice->id = plugin->next_voice_id++;
+    init_voice(voice, plugin, note);
+}
+
+static void
+process_note_off(synth2_plugin_t *plugin, const clap_event_note_t *note) {
+    for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
+        synth2_voice_t *voice = &plugin->voices[i];
+        if (voice->state != SYNTH2_PLUGIN_VOICE_HOLDING) continue;
+        if (note->key != -1 && voice->key != note->key) continue;
+        if (note->note_id != -1 && voice->note_id != note->note_id) continue;
+        if (note->channel != -1 && voice->channel != note->channel) continue;
+
+        voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
+        synth2_adsr_keyoff(&voice->amp);
+        synth2_adsr_keyoff(&voice->filter_adsr);
+        break;
+    }
+}
+
+void synth2_process_event(
+    synth2_plugin_t *plugin,
+    const clap_event_header_t *event
+) {
     if (event->space_id != CLAP_CORE_EVENT_SPACE_ID) return;
 
     if (event->type == CLAP_EVENT_NOTE_ON) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
-
-        size_t voice_idx = find_useable_voice_idx(plugin->voices);
-        synth2_voice_t *voice = &plugin->voices[voice_idx];
-        voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
-        voice->note_id = note->note_id;
-        voice->channel = note->channel;
-        voice->key = note->key;
-        voice->id = plugin->next_voice_id++;
-        init_voice(voice, plugin, note);
+        process_note_on(plugin, note);
     } else if (event->type == CLAP_EVENT_NOTE_OFF) {
         const clap_event_note_t *note = (const clap_event_note_t *)event;
-        for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
-            synth2_voice_t *voice = &plugin->voices[i];
-            if (voice->state != SYNTH2_PLUGIN_VOICE_HOLDING) continue;
-            if (note->key != -1 && voice->key != note->key) continue;
-            if (note->note_id != -1 && voice->note_id != note->note_id) continue;
-            if (note->channel != -1 && voice->channel != note->channel) continue;
-
-            voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
-            synth2_adsr_keyoff(&voice->amp);
-            synth2_adsr_keyoff(&voice->filter_adsr);
-            break;
-        }
+        process_note_off(plugin, note);
     } else if (event->type == CLAP_EVENT_PARAM_VALUE) {
         // TODO: Need mutex for changing parameters?
-        const clap_event_param_value_t *value = (clap_event_param_value_t *)event;
+        const clap_event_param_value_t *value =
+            (clap_event_param_value_t *)event;
         synth2_params_update(&plugin->params, value->param_id, value->value);
     }
 }
