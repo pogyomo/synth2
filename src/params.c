@@ -24,6 +24,7 @@ const synth2_params_t synth2_params_default_value = {
     {0, 0, 128, 0, 64},
     {SYNTH2_FILTER_LP, 0, 0, 128, 0, 0, 128, 0},
     {1, 0},
+    {64},
 };
 
 bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
@@ -264,6 +265,15 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->max_value = 128;
             info->default_value = params->unison.depth;
             return true;
+        case SYNTH2_PARAM_ID_CTRL_VOLUME:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Volume", sizeof(info->name));
+            strncpy(info->module, "Contorl", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->ctrl.volume;
+            return true;
         default:
             return false;
     }
@@ -353,6 +363,9 @@ bool synth2_params_get_value(
         case SYNTH2_PARAM_ID_UNISON_DEPTH:
             *out_value = params->unison.depth;
             return true;
+        case SYNTH2_PARAM_ID_CTRL_VOLUME:
+            *out_value = params->ctrl.volume;
+            return true;
         default:
             return false;
     }
@@ -423,6 +436,7 @@ bool synth2_params_value_to_text(
         case SYNTH2_PARAM_ID_FILTER_RES:
         case SYNTH2_PARAM_ID_UNISON_SIZE:
         case SYNTH2_PARAM_ID_UNISON_DEPTH:
+        case SYNTH2_PARAM_ID_CTRL_VOLUME:
             snprintf(out_buffer, out_buffer_capacity, "%d", (int)value);
             return true;
         default:
@@ -521,6 +535,9 @@ bool synth2_params_update(
             return true;
         case SYNTH2_PARAM_ID_UNISON_DEPTH:
             params->unison.depth = value;
+            return true;
+        case SYNTH2_PARAM_ID_CTRL_VOLUME:
+            params->ctrl.volume = value;
             return true;
         default:
             return false;
