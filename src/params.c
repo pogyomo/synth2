@@ -23,6 +23,7 @@ const synth2_params_t synth2_params_default_value = {
     {64},
     {0, 0, 128, 0, 64},
     {SYNTH2_FILTER_LP, 0, 0, 128, 0, 0, 128, 0},
+    {1, 0},
 };
 
 bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
@@ -245,6 +246,24 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->max_value = 128;
             info->default_value = params->filter.res;
             return true;
+        case SYNTH2_PARAM_ID_UNISON_SIZE:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Size", sizeof(info->name));
+            strncpy(info->module, "Unison", sizeof(info->module));
+            info->min_value = 1;
+            info->max_value = 6;
+            info->default_value = params->unison.size;
+            return true;
+        case SYNTH2_PARAM_ID_UNISON_DEPTH:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Depth", sizeof(info->name));
+            strncpy(info->module, "Unison", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->unison.depth;
+            return true;
         default:
             return false;
     }
@@ -328,6 +347,12 @@ bool synth2_params_get_value(
         case SYNTH2_PARAM_ID_FILTER_RES:
             *out_value = params->filter.res;
             return true;
+        case SYNTH2_PARAM_ID_UNISON_SIZE:
+            *out_value = params->unison.size;
+            return true;
+        case SYNTH2_PARAM_ID_UNISON_DEPTH:
+            *out_value = params->unison.depth;
+            return true;
         default:
             return false;
     }
@@ -396,6 +421,8 @@ bool synth2_params_value_to_text(
         case SYNTH2_PARAM_ID_FILTER_AMT:
         case SYNTH2_PARAM_ID_FILTER_FREQ:
         case SYNTH2_PARAM_ID_FILTER_RES:
+        case SYNTH2_PARAM_ID_UNISON_SIZE:
+        case SYNTH2_PARAM_ID_UNISON_DEPTH:
             snprintf(out_buffer, out_buffer_capacity, "%d", (int)value);
             return true;
         default:
@@ -488,6 +515,12 @@ bool synth2_params_update(
             return true;
         case SYNTH2_PARAM_ID_FILTER_RES:
             params->filter.res = value;
+            return true;
+        case SYNTH2_PARAM_ID_UNISON_SIZE:
+            params->unison.size = value;
+            return true;
+        case SYNTH2_PARAM_ID_UNISON_DEPTH:
+            params->unison.depth = value;
             return true;
         default:
             return false;

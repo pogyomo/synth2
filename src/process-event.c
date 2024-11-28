@@ -60,40 +60,57 @@ static inline double convert_filter_freq(double sample_rate, uint8_t freq) {
     return k2f(freq, 0);
 }
 
-static double convert_osc1_freq(const synth2_params_osc1_t *osc1, int16_t key) {
+static double convert_osc1_freq(
+    const synth2_params_osc1_t *osc1,
+    int16_t key,
+    double cent
+) {
     if (osc1->track) {
         return k2f(69, 0);
     } else {
-        return k2f(key + osc1->pitch, osc1->cent);
+        return k2f(key + osc1->pitch, (double)osc1->cent + cent);
     }
 }
 
-static double convert_osc2_freq(const synth2_params_osc2_t *osc2, int16_t key) {
+static double convert_osc2_freq(
+    const synth2_params_osc2_t *osc2,
+    int16_t key,
+    double cent
+) {
     if (osc2->track) {
         return k2f(69, 0);
     } else {
-        return k2f(key + osc2->pitch, osc2->cent);
+        return k2f(key + osc2->pitch, (double)osc2->cent + cent);
     }
+}
+
+static inline double unison_cent_d(const synth2_plugin_t *plugin) {
+    // Currently I consider depth is the cent from voice1 to voiceN.
+    // Returns cent between for each voice.
+    return (double)plugin->params.unison.depth /
+           (double)plugin->params.unison.size;
 }
 
 static void init_voice(
     synth2_voice_t *voice,
     synth2_plugin_t *plugin,
-    const clap_event_note_t *note
+    const clap_event_note_t *note,
+    const size_t unison_index
 ) {
     const synth2_params_osc1_t *osc1 = &plugin->params.osc1;
     const synth2_params_osc2_t *osc2 = &plugin->params.osc2;
     const synth2_params_oscs_t *oscs = &plugin->params.oscs;
     const synth2_params_amp_t *amp = &plugin->params.amp;
     const synth2_params_filter_t *filter = &plugin->params.filter;
+    const double unison_cent = unison_cent_d(plugin) * unison_index;
 
-    const double osc1_freq = convert_osc1_freq(osc1, note->key);
+    const double osc1_freq = convert_osc1_freq(osc1, note->key, unison_cent);
     const double osc1_duty = convert_duty(osc1->duty);
     synth2_osc_init(
         &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty
     );
 
-    const double osc2_freq = convert_osc2_freq(osc2, note->key);
+    const double osc2_freq = convert_osc2_freq(osc2, note->key, unison_cent);
     const double osc2_duty = convert_duty(osc2->duty);
     synth2_osc_init(
         &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty
@@ -146,14 +163,17 @@ static void process_note_on(
     synth2_plugin_t *plugin,
     const clap_event_note_t *note
 ) {
-    size_t voice_idx = find_useable_voice_idx(plugin->voices);
-    synth2_voice_t *voice = &plugin->voices[voice_idx];
-    voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
-    voice->note_id = note->note_id;
-    voice->channel = note->channel;
-    voice->key = note->key;
-    voice->id = plugin->next_voice_id++;
-    init_voice(voice, plugin, note);
+    const synth2_voice_id_t id = plugin->next_voice_id++;
+    for (size_t i = 0; i < plugin->params.unison.size; i++) {
+        size_t voice_idx = find_useable_voice_idx(plugin->voices);
+        synth2_voice_t *voice = &plugin->voices[voice_idx];
+        voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
+        voice->note_id = note->note_id;
+        voice->channel = note->channel;
+        voice->key = note->key;
+        voice->id = id;
+        init_voice(voice, plugin, note, i);
+    }
 }
 
 static void process_note_off(
@@ -170,7 +190,6 @@ static void process_note_off(
         voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
         synth2_adsr_keyoff(&voice->amp);
         synth2_adsr_keyoff(&voice->filter_adsr);
-        break;
     }
 }
 
