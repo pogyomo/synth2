@@ -50,8 +50,8 @@ static inline double process_amp(
     double in
 ) {
     const double sampled = synth2_adsr_sample(&voice->amp);
-    const double level = sampled * ((double)plugin->params.amp.gain / 128.0);
-    return level * in;
+    const double level = sampled * (double)plugin->params.amp.gain / 128.0;
+    return level * in / (double)plugin->params.unison.size;
 }
 
 static inline double process_filter(

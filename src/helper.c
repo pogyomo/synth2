@@ -16,6 +16,6 @@
 
 #include <math.h>
 
-double k2f(int16_t key, int16_t cent) {
-    return 440.0 * exp2((double)(key * 100 + cent - 6900) / 1200.0);
+double k2f(int16_t key, double cent) {
+    return 440.0 * exp2(((double)key * 100.0 + cent - 6900.0) / 1200.0);
 }

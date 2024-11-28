@@ -49,8 +49,10 @@ typedef enum synth2_param_id {
     SYNTH2_PARAM_ID_FILTER_AMT,
     SYNTH2_PARAM_ID_FILTER_FREQ,
     SYNTH2_PARAM_ID_FILTER_RES,
+    SYNTH2_PARAM_ID_UNISON_SIZE,
+    SYNTH2_PARAM_ID_UNISON_DEPTH,
     SYNTH2_PARAM_ID_MIN = SYNTH2_PARAM_ID_OSC1_WAVE,
-    SYNTH2_PARAM_ID_MAX = SYNTH2_PARAM_ID_FILTER_RES,
+    SYNTH2_PARAM_ID_MAX = SYNTH2_PARAM_ID_UNISON_DEPTH,
 } synth2_param_id_t;
 
 typedef struct synth2_params_osc1 {
@@ -85,12 +87,18 @@ typedef struct synth2_params_filter {
     uint8_t freq, res;   // 0..=128
 } synth2_params_filter_t;
 
+typedef struct synth2_params_unison {
+    uint8_t size;   // 1..=6
+    uint8_t depth;  // 0..128
+} synth2_params_unison_t;
+
 typedef struct synth2_params {
     synth2_params_osc1_t osc1;
     synth2_params_osc2_t osc2;
     synth2_params_oscs_t oscs;
     synth2_params_amp_t amp;
     synth2_params_filter_t filter;
+    synth2_params_unison_t unison;
 } synth2_params_t;
 
 extern const synth2_params_t synth2_params_default_value;
