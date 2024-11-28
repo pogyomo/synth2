@@ -27,10 +27,14 @@
 typedef enum synth2_param_id {
     SYNTH2_PARAM_ID_OSC1_WAVE,
     SYNTH2_PARAM_ID_OSC1_DUTY,
+    SYNTH2_PARAM_ID_OSC1_PITCH,
+    SYNTH2_PARAM_ID_OSC1_CENT,
+    SYNTH2_PARAM_ID_OSC1_TRACK,
     SYNTH2_PARAM_ID_OSC2_WAVE,
     SYNTH2_PARAM_ID_OSC2_DUTY,
     SYNTH2_PARAM_ID_OSC2_PITCH,
     SYNTH2_PARAM_ID_OSC2_CENT,
+    SYNTH2_PARAM_ID_OSC2_TRACK,
     SYNTH2_PARAM_ID_OSCS_MIX,
     SYNTH2_PARAM_ID_AMP_A,
     SYNTH2_PARAM_ID_AMP_D,
@@ -52,6 +56,9 @@ typedef enum synth2_param_id {
 typedef struct synth2_params_osc1 {
     synth2_osc_wave_t wave;
     uint8_t duty;  // 0..=128
+    int8_t pitch;  // -12..=12
+    int8_t cent;   // -64..=64
+    bool track;
 } synth2_params_osc1_t;
 
 typedef struct synth2_params_osc2 {
@@ -59,6 +66,7 @@ typedef struct synth2_params_osc2 {
     uint8_t duty;  // 0..=128
     int8_t pitch;  // -12..=12
     int8_t cent;   // -64..=64
+    bool track;
 } synth2_params_osc2_t;
 
 typedef struct synth2_params_oscs {

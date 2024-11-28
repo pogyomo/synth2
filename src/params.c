@@ -18,8 +18,8 @@
 #include <string.h>
 
 const synth2_params_t synth2_params_default_value = {
-    {SYNTH2_OSC_WAVE_SINE, 128},
-    {SYNTH2_OSC_WAVE_SINE, 128, 0, 0},
+    {SYNTH2_OSC_WAVE_SINE, 128, 0, 0, false},
+    {SYNTH2_OSC_WAVE_SINE, 128, 0, 0, false},
     {64},
     {0, 0, 128, 0, 64},
     {SYNTH2_FILTER_LP, 0, 0, 128, 0, 0, 128, 0},
@@ -45,6 +45,33 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->min_value = 0;
             info->max_value = 128;
             info->default_value = params->osc1.duty;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_PITCH:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Pitch", sizeof(info->name));
+            strncpy(info->module, "Oscillator1", sizeof(info->module));
+            info->min_value = -12;
+            info->max_value = 12;
+            info->default_value = params->osc1.pitch;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_CENT:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Cent", sizeof(info->name));
+            strncpy(info->module, "Oscillator1", sizeof(info->module));
+            info->min_value = -64;
+            info->max_value = 64;
+            info->default_value = params->osc1.cent;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_TRACK:
+            info->id = param_index;
+            info->flags = CLAP_PARAM_IS_STEPPED;
+            strncpy(info->name, "Track", sizeof(info->name));
+            strncpy(info->module, "Oscillator1", sizeof(info->module));
+            info->min_value = false;
+            info->max_value = true;
+            info->default_value = params->osc1.track;
             return true;
         case SYNTH2_PARAM_ID_OSC2_WAVE:
             info->id = param_index;
@@ -81,6 +108,15 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->min_value = -64;
             info->max_value = 64;
             info->default_value = params->osc2.cent;
+            return true;
+        case SYNTH2_PARAM_ID_OSC2_TRACK:
+            info->id = param_index;
+            info->flags = CLAP_PARAM_IS_STEPPED;
+            strncpy(info->name, "Track", sizeof(info->name));
+            strncpy(info->module, "Oscillator2", sizeof(info->module));
+            info->min_value = false;
+            info->max_value = true;
+            info->default_value = params->osc2.track;
             return true;
         case SYNTH2_PARAM_ID_OSCS_MIX:
             info->id = param_index;
@@ -226,6 +262,15 @@ bool synth2_params_get_value(
         case SYNTH2_PARAM_ID_OSC1_DUTY:
             *out_value = params->osc1.duty;
             return true;
+        case SYNTH2_PARAM_ID_OSC1_PITCH:
+            *out_value = params->osc1.pitch;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_CENT:
+            *out_value = params->osc1.cent;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_TRACK:
+            *out_value = params->osc1.track;
+            return true;
         case SYNTH2_PARAM_ID_OSC2_WAVE:
             *out_value = params->osc2.wave;
             return true;
@@ -237,6 +282,9 @@ bool synth2_params_get_value(
             return true;
         case SYNTH2_PARAM_ID_OSC2_CENT:
             *out_value = params->osc2.cent;
+            return true;
+        case SYNTH2_PARAM_ID_OSC2_TRACK:
+            *out_value = params->osc2.track;
             return true;
         case SYNTH2_PARAM_ID_OSCS_MIX:
             *out_value = params->oscs.mix;
@@ -321,7 +369,17 @@ bool synth2_params_value_to_text(
                     return true;
             }
             return true;
+        case SYNTH2_PARAM_ID_OSC1_TRACK:
+        case SYNTH2_PARAM_ID_OSC2_TRACK:
+            if ((bool)value) {
+                strncpy(out_buffer, "ON", out_buffer_capacity);
+            } else {
+                strncpy(out_buffer, "OFF", out_buffer_capacity);
+            }
+            return true;
         case SYNTH2_PARAM_ID_OSC1_DUTY:
+        case SYNTH2_PARAM_ID_OSC1_PITCH:
+        case SYNTH2_PARAM_ID_OSC1_CENT:
         case SYNTH2_PARAM_ID_OSC2_DUTY:
         case SYNTH2_PARAM_ID_OSC2_PITCH:
         case SYNTH2_PARAM_ID_OSC2_CENT:
@@ -365,6 +423,15 @@ bool synth2_params_update(
         case SYNTH2_PARAM_ID_OSC1_DUTY:
             params->osc1.duty = value;
             return true;
+        case SYNTH2_PARAM_ID_OSC1_PITCH:
+            params->osc1.pitch = value;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_CENT:
+            params->osc1.cent = value;
+            return true;
+        case SYNTH2_PARAM_ID_OSC1_TRACK:
+            params->osc1.track = value;
+            return true;
         case SYNTH2_PARAM_ID_OSC2_WAVE:
             params->osc2.wave = value;
             return true;
@@ -376,6 +443,9 @@ bool synth2_params_update(
             return true;
         case SYNTH2_PARAM_ID_OSC2_CENT:
             params->osc2.cent = value;
+            return true;
+        case SYNTH2_PARAM_ID_OSC2_TRACK:
+            params->osc2.track = value;
             return true;
         case SYNTH2_PARAM_ID_OSCS_MIX:
             params->oscs.mix = value;
