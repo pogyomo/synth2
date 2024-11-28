@@ -50,8 +50,8 @@ static inline double process_amp(
     double in
 ) {
     const double sampled = synth2_adsr_sample(&voice->amp);
-    const double level = sampled * (double)plugin->params.amp.gain / 128.0;
-    return level * in;
+    const double volume = sampled * (double)plugin->params.amp.gain / 128.0;
+    return volume * in;
 }
 
 static inline double process_filter(
@@ -70,6 +70,11 @@ static inline double process_unison(const synth2_plugin_t *plugin, double in) {
     return in / (double)plugin->params.unison.size;
 }
 
+static inline double process_ctrl(const synth2_plugin_t *plugin, double in) {
+    const double volume = (double)plugin->params.ctrl.volume / 128.0;
+    return volume * in;
+}
+
 static inline double generate_auido(
     const synth2_plugin_t *plugin,
     synth2_voice_t *voice
@@ -77,7 +82,8 @@ static inline double generate_auido(
     double out = process_oscs(plugin, voice);
     out = process_amp(plugin, voice, out);
     out = process_filter(plugin, voice, out);
-    return process_unison(plugin, out);
+    out = process_unison(plugin, out);
+    return process_ctrl(plugin, out);
 }
 
 static double render_audio(synth2_plugin_t *plugin) {
