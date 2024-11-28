@@ -62,7 +62,7 @@ static inline double process_filter(
     const double sampled = synth2_adsr_sample(&voice->filter_adsr);
     const int16_t diff = sampled * plugin->params.filter.amt * 2;
     const int16_t freq = plugin->params.filter.freq + diff;
-    synth2_filter_set_freq(&voice->filter, k2f(clamp(freq, 0, 128)));
+    synth2_filter_set_freq(&voice->filter, k2f(clamp(freq, 0, 128), 0));
     return synth2_filter_process(&voice->filter, in);
 }
 
