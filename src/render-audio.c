@@ -77,7 +77,7 @@ static inline double generate_auido(
     double out = process_oscs(plugin, voice);
     out = process_amp(plugin, voice, out);
     out = process_filter(plugin, voice, out);
-    return process_unison(plugin, in);
+    return process_unison(plugin, out);
 }
 
 static double render_audio(synth2_plugin_t *plugin) {
