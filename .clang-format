@@ -11,4 +11,6 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 PenaltyReturnTypeOnItsOwnLine: 1000
 PenaltyBreakAssignment: 1000
+QualifierAlignment: Custom
+QualifierOrder: [static, inline, const, volatile, restrict, type]
 ColumnLimit: 80
