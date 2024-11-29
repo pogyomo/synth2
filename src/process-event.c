@@ -22,6 +22,7 @@
 #include "synth2/macros.h"
 #include "synth2/osc.h"
 #include "synth2/params.h"
+#include "synth2/random.h"
 
 static inline double convert_amp_a(const synth2_params_amp_t *amp) {
     return ((double)amp->a / 128.0) * 2.0 + 0.005;
@@ -93,10 +94,18 @@ static inline double unison_cent_d(const synth2_params_unison_t *unison) {
     return (double)unison->depth / (double)unison->size;
 }
 
-static inline double convert_oscs_phase(const synth2_params_oscs_t *oscs) {
-    // TODO: Use better random generator (create module for it?)
-    const double phase = oscs->phase == 128 ? (double)rand() / (double)RAND_MAX
-                                            : (double)oscs->phase / 128.0;
+static inline double convert_oscs_phase(
+    synth2_random_t *random,
+    const synth2_params_oscs_t *oscs
+) {
+    double phase;
+    if (oscs->phase == 128) {
+        const synth2_random_value_t value = synth2_random_gen(random);
+        phase = (double)(value - SYNTH2_RANDOM_MIN) /
+                (double)(SYNTH2_RANDOM_MAX - SYNTH2_RANDOM_MIN);
+    } else {
+        phase = (double)oscs->phase / 128.0;
+    }
     return phase * PI2;
 }
 
@@ -113,7 +122,7 @@ static void init_voice(
     const synth2_params_filter_t *filter = &plugin->params.filter;
     const synth2_params_unison_t *unison = &plugin->params.unison;
     const double unison_cent = unison_cent_d(unison) * unison_index;
-    const double phase = convert_oscs_phase(oscs);
+    const double phase = convert_oscs_phase(&plugin->random, oscs);
 
     const double osc1_freq = convert_osc1_freq(osc1, note->key, unison_cent);
     const double osc1_duty = convert_duty(osc1->duty);

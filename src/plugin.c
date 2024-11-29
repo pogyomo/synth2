@@ -29,6 +29,8 @@ static bool plugin_init(const clap_plugin_t *plugin) {
     synth2_plugin_t *plug = plugin->plugin_data;
     plug->params = synth2_params_default_value;
 
+    synth2_random_default(&plug->random);
+
     plug->next_voice_id = 0;
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_voice_t *voice = &plug->voices[i];
