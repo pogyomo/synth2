@@ -36,6 +36,7 @@ typedef enum synth2_param_id {
     SYNTH2_PARAM_ID_OSC2_CENT,
     SYNTH2_PARAM_ID_OSC2_TRACK,
     SYNTH2_PARAM_ID_OSCS_MIX,
+    SYNTH2_PARAM_ID_OSCS_PHASE,
     SYNTH2_PARAM_ID_AMP_A,
     SYNTH2_PARAM_ID_AMP_D,
     SYNTH2_PARAM_ID_AMP_S,
@@ -73,7 +74,8 @@ typedef struct synth2_params_osc2 {
 } synth2_params_osc2_t;
 
 typedef struct synth2_params_oscs {
-    uint8_t mix;  // 0..=128
+    uint8_t mix;    // 0..=128
+    uint8_t phase;  // 0..=128
 } synth2_params_oscs_t;
 
 typedef struct synth2_params_amp {

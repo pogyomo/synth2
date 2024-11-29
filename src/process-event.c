@@ -14,9 +14,12 @@
 
 #include "synth2/process-event.h"
 
+#include <stdlib.h>
+
 #include "synth2/adsr.h"
 #include "synth2/filter.h"
 #include "synth2/helper.h"
+#include "synth2/macros.h"
 #include "synth2/osc.h"
 #include "synth2/params.h"
 
@@ -84,11 +87,17 @@ static double convert_osc2_freq(
     }
 }
 
-static inline double unison_cent_d(const synth2_plugin_t *plugin) {
+static inline double unison_cent_d(const synth2_params_unison_t *unison) {
     // Currently I consider depth is the cent from voice1 to voiceN.
     // Returns cent between for each voice.
-    return (double)plugin->params.unison.depth /
-           (double)plugin->params.unison.size;
+    return (double)unison->depth / (double)unison->size;
+}
+
+static inline double convert_oscs_phase(const synth2_params_oscs_t *oscs) {
+    // TODO: Use better random generator (create module for it?)
+    const double phase = oscs->phase == 128 ? (double)rand() / (double)RAND_MAX
+                                            : (double)oscs->phase / 128.0;
+    return phase * PI2;
 }
 
 static void init_voice(
@@ -102,18 +111,22 @@ static void init_voice(
     const synth2_params_oscs_t *oscs = &plugin->params.oscs;
     const synth2_params_amp_t *amp = &plugin->params.amp;
     const synth2_params_filter_t *filter = &plugin->params.filter;
-    const double unison_cent = unison_cent_d(plugin) * unison_index;
+    const synth2_params_unison_t *unison = &plugin->params.unison;
+    const double unison_cent = unison_cent_d(unison) * unison_index;
+    const double phase = convert_oscs_phase(oscs);
 
     const double osc1_freq = convert_osc1_freq(osc1, note->key, unison_cent);
     const double osc1_duty = convert_duty(osc1->duty);
     synth2_osc_init(
-        &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty, 0.0
+        &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty,
+        phase
     );
 
     const double osc2_freq = convert_osc2_freq(osc2, note->key, unison_cent);
     const double osc2_duty = convert_duty(osc2->duty);
     synth2_osc_init(
-        &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty, 0.0
+        &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty,
+        phase
     );
 
     const double amp_a = convert_amp_a(amp);

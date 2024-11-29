@@ -20,7 +20,7 @@
 const synth2_params_t synth2_params_default_value = {
     {SYNTH2_OSC_WAVE_SINE, 128, 0, 0, false},
     {SYNTH2_OSC_WAVE_SINE, 128, 0, 0, false},
-    {64},
+    {64, 0},
     {0, 0, 128, 0, 64},
     {SYNTH2_FILTER_LP, 0, 0, 128, 0, 0, 128, 0},
     {1, 0},
@@ -128,6 +128,15 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->min_value = 0;
             info->max_value = 128;
             info->default_value = params->oscs.mix;
+            return true;
+        case SYNTH2_PARAM_ID_OSCS_PHASE:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Phase", sizeof(info->name));
+            strncpy(info->module, "Oscillators", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->oscs.phase;
             return true;
         case SYNTH2_PARAM_ID_AMP_A:
             info->id = param_index;
@@ -318,6 +327,9 @@ bool synth2_params_get_value(
         case SYNTH2_PARAM_ID_OSCS_MIX:
             *out_value = params->oscs.mix;
             return true;
+        case SYNTH2_PARAM_ID_OSCS_PHASE:
+            *out_value = params->oscs.phase;
+            return true;
         case SYNTH2_PARAM_ID_AMP_A:
             *out_value = params->amp.a;
             return true;
@@ -422,6 +434,7 @@ bool synth2_params_value_to_text(
         case SYNTH2_PARAM_ID_OSC2_PITCH:
         case SYNTH2_PARAM_ID_OSC2_CENT:
         case SYNTH2_PARAM_ID_OSCS_MIX:
+        case SYNTH2_PARAM_ID_OSCS_PHASE:
         case SYNTH2_PARAM_ID_AMP_A:
         case SYNTH2_PARAM_ID_AMP_D:
         case SYNTH2_PARAM_ID_AMP_S:
@@ -490,6 +503,9 @@ bool synth2_params_update(
             return true;
         case SYNTH2_PARAM_ID_OSCS_MIX:
             params->oscs.mix = value;
+            return true;
+        case SYNTH2_PARAM_ID_OSCS_PHASE:
+            params->oscs.phase = value;
             return true;
         case SYNTH2_PARAM_ID_AMP_A:
             params->amp.a = value;
