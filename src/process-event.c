@@ -106,6 +106,8 @@ static inline double convert_oscs_phase(
         phase = (double)(value - SYNTH2_RANDOM_MIN) /
                 (double)(SYNTH2_RANDOM_MAX - SYNTH2_RANDOM_MIN);
     } else {
+        /// Phase 0 for voice0, phase (oscs->phase / 128.0) * PI2 for voiceN.
+        /// Phases for voice1~(N-1) is calculated linearly.
         const double d = ((double)oscs->phase / 128.0) / (double)unison->size;
         phase = d * (double)unison_index;
     }
