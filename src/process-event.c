@@ -181,7 +181,7 @@ static size_t find_useable_voice_idx(synth2_voice_t *voices) {
             min_id = voices[i].id;
             min_idx = i;
         }
-        if (voices[i].state == SYNTH2_PLUGIN_VOICE_UNUSED) {
+        if (voices[i].state == SYNTH2_VOICE_UNUSED) {
             return i;
         }
     }
@@ -196,7 +196,7 @@ static void process_note_on(
     for (size_t i = 0; i < plugin->params.unison.size; i++) {
         size_t voice_idx = find_useable_voice_idx(plugin->voices);
         synth2_voice_t *voice = &plugin->voices[voice_idx];
-        voice->state = SYNTH2_PLUGIN_VOICE_HOLDING;
+        voice->state = SYNTH2_VOICE_HOLDING;
         voice->note_id = note->note_id;
         voice->channel = note->channel;
         voice->key = note->key;
@@ -211,12 +211,12 @@ static void process_note_off(
 ) {
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_voice_t *voice = &plugin->voices[i];
-        if (voice->state != SYNTH2_PLUGIN_VOICE_HOLDING) continue;
+        if (voice->state != SYNTH2_VOICE_HOLDING) continue;
         if (note->key != -1 && voice->key != note->key) continue;
         if (note->note_id != -1 && voice->note_id != note->note_id) continue;
         if (note->channel != -1 && voice->channel != note->channel) continue;
 
-        voice->state = SYNTH2_PLUGIN_VOICE_RELEASE;
+        voice->state = SYNTH2_VOICE_RELEASE;
         synth2_adsr_keyoff(&voice->amp);
         synth2_adsr_keyoff(&voice->filter_adsr);
     }
