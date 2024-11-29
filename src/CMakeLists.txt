@@ -19,6 +19,7 @@ add_library(synth2-core STATIC
     params.c
     plugin.c
     process-event.c
+    random.c
     render-audio.c
     voice.c
 )

@@ -27,12 +27,14 @@ typedef struct synth2_osc {
 } synth2_osc_t;
 
 /// Initialize oscillator with given parameters
+/// phase must be in [0, 2π)
 void synth2_osc_init(
     synth2_osc_t* osc,
     synth2_osc_wave_t wave,
     double sample_rate,
     double freq,
-    double duty
+    double duty,
+    double phase
 );
 
 /// Sample a point from generated wave, then prepare for next sample.

@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include "synth2/params.h"
+#include "synth2/random.h"
 #include "synth2/voice.h"
 
 #define SYNTH2_PLUGIN_MAX_VOICES 32
@@ -32,6 +33,9 @@ typedef struct synth2_plugin {
 
     /// Parameters for modules
     synth2_params_t params;
+
+    /// Random generator for initial osc phase.
+    synth2_random_t random;
 
     /// Voices to be used to render audio.
     synth2_voice_id_t next_voice_id;
