@@ -34,7 +34,7 @@ static bool plugin_init(const clap_plugin_t *plugin) {
     plug->next_voice_id = 0;
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_voice_t *voice = &plug->voices[i];
-        voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
+        voice->state = SYNTH2_VOICE_UNUSED;
     }
 
     return true;
@@ -120,7 +120,7 @@ static clap_process_status plugin_process(
 
     for (size_t i = 0; i < SYNTH2_PLUGIN_MAX_VOICES; i++) {
         synth2_voice_t *voice = &plug->voices[i];
-        if (voice->state == SYNTH2_PLUGIN_VOICE_POST_PROCESS) {
+        if (voice->state == SYNTH2_VOICE_POST_PROCESS) {
             clap_event_note_t event;
             event.header.size = sizeof(event);
             event.header.time = 0;
@@ -132,7 +132,7 @@ static clap_process_status plugin_process(
             event.channel = voice->channel;
             event.port_index = 0;
             process->out_events->try_push(process->out_events, &event.header);
-            voice->state = SYNTH2_PLUGIN_VOICE_UNUSED;
+            voice->state = SYNTH2_VOICE_UNUSED;
         };
     }
 
