@@ -24,36 +24,20 @@
 #include "synth2/params.h"
 #include "synth2/random.h"
 
-static inline double convert_amp_a(const synth2_params_amp_t *amp) {
-    return ((double)amp->a / 128.0) * 2.0 + 0.005;
+static inline double convert_a(uint8_t a) {
+    return ((double)a / 128.0) * 2.0 + 0.005;
 }
 
-static inline double convert_amp_d(const synth2_params_amp_t *amp) {
-    return ((double)amp->d / 128.0) * 2.0 + 0.005;
+static inline double convert_d(uint8_t d) {
+    return ((double)d / 128.0) * 2.0 + 0.005;
 }
 
-static inline double convert_amp_s(const synth2_params_amp_t *amp) {
-    return (double)amp->s / 128.0;
+static inline double convert_s(uint8_t s) {
+    return (double)s / 128.0;
 }
 
-static inline double convert_amp_r(const synth2_params_amp_t *amp) {
-    return ((double)amp->r / 128.0) * 2.0 + 0.005;
-}
-
-static inline double convert_filter_a(const synth2_params_filter_t *filter) {
-    return ((double)filter->a / 128.0) * 2.0 + 0.005;
-}
-
-static inline double convert_filter_d(const synth2_params_filter_t *filter) {
-    return ((double)filter->d / 128.0) * 2.0 + 0.005;
-}
-
-static inline double convert_filter_s(const synth2_params_filter_t *filter) {
-    return (double)filter->s / 128.0;
-}
-
-static inline double convert_filter_r(const synth2_params_filter_t *filter) {
-    return ((double)filter->r / 128.0) * 2.0 + 0.005;
+static inline double convert_r(uint8_t r) {
+    return ((double)r / 128.0) * 2.0 + 0.005;
 }
 
 static inline double convert_duty(uint8_t duty) {
@@ -124,6 +108,7 @@ static void init_voice(
     const synth2_params_osc2_t *osc2 = &plugin->params.osc2;
     const synth2_params_oscs_t *oscs = &plugin->params.oscs;
     const synth2_params_amp_t *amp = &plugin->params.amp;
+    const synth2_params_mod_t *mod = &plugin->params.mod;
     const synth2_params_filter_t *filter = &plugin->params.filter;
     const synth2_params_unison_t *unison = &plugin->params.unison;
     const double unison_cent = unison_cent_d(unison) * unison_index;
@@ -145,18 +130,26 @@ static void init_voice(
         phase
     );
 
-    const double amp_a = convert_amp_a(amp);
-    const double amp_d = convert_amp_d(amp);
-    const double amp_s = convert_amp_s(amp);
-    const double amp_r = convert_amp_r(amp);
+    const double amp_a = convert_a(amp->a);
+    const double amp_d = convert_d(amp->d);
+    const double amp_s = convert_s(amp->s);
+    const double amp_r = convert_r(amp->r);
     synth2_adsr_init(
         &voice->amp, plugin->sample_rate, amp_a, amp_d, amp_s, amp_r
     );
 
-    const double filter_a = convert_filter_a(filter);
-    const double filter_d = convert_filter_d(filter);
-    const double filter_s = convert_filter_s(filter);
-    const double filter_r = convert_filter_r(filter);
+    const double mod_a = convert_a(mod->a);
+    const double mod_d = convert_d(mod->d);
+    const double mod_s = convert_s(mod->s);
+    const double mod_r = convert_r(mod->r);
+    synth2_adsr_init(
+        &voice->mod, plugin->sample_rate, mod_a, mod_d, mod_s, mod_r
+    );
+
+    const double filter_a = convert_a(filter->a);
+    const double filter_d = convert_d(filter->d);
+    const double filter_s = convert_s(filter->s);
+    const double filter_r = convert_r(filter->r);
     synth2_adsr_init(
         &voice->filter_adsr, plugin->sample_rate, filter_a, filter_d, filter_s,
         filter_r

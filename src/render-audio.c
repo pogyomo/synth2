@@ -32,16 +32,42 @@ static inline int16_t clamp(
     }
 }
 
+static double convert_osc1_freq(
+    const synth2_params_osc1_t *osc1,
+    int16_t key,
+    double cent
+) {
+    if (osc1->track) {
+        return k2f(69, 0);
+    } else {
+        return k2f(key + osc1->pitch, (double)osc1->cent + cent);
+    }
+}
+
 static inline double process_oscs(
     const synth2_plugin_t *plugin,
     synth2_voice_t *voice
 ) {
-    const double osc1 = synth2_osc_sample(&voice->osc1);
+    const double amt = synth2_adsr_sample(&voice->mod) *
+                       ((double)plugin->params.mod.amt / 128.0);
+
     const double osc2 = synth2_osc_sample(&voice->osc2);
+    if (plugin->params.mod.type == SYNTH2_PARAM_MOD_FM) {
+        const double base_freq = convert_osc1_freq(
+            &plugin->params.osc1, voice->key, 0
+        );
+        const double next_freq = base_freq + base_freq * osc2 * amt;
+        synth2_osc_set_freq(&voice->osc1, next_freq);
+    }
+    const double osc1 = synth2_osc_sample(&voice->osc1);
+
     const double osc2_mix = (double)plugin->params.oscs.mix / 128.0;
     const double osc1_mix = 1.0 - osc2_mix;
-    const double mixed = osc1 * osc1_mix + osc2 * osc2_mix;
-    return mixed;
+    if (plugin->params.mod.type == SYNTH2_PARAM_MOD_AM) {
+        return osc1 * osc1_mix * amt * osc2 + osc2 * osc2_mix;
+    } else {
+        return osc1 * osc1_mix + osc2 * osc2_mix;
+    }
 }
 
 static inline double process_amp(
