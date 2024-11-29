@@ -22,13 +22,14 @@ void synth2_osc_init(
     synth2_osc_wave_t wave,
     double sample_rate,
     double freq,
-    double duty
+    double duty,
+    double phase
 ) {
     osc->wave = wave;
     osc->sample_rate = sample_rate;
     osc->freq = freq;
     osc->duty = duty;
-    osc->phase = 0.0;
+    osc->phase = phase;
     osc->prev = 0.0;
     osc->gen = synth2_osc_wave_generator_by_wave(wave);
 }

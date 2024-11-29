@@ -107,13 +107,13 @@ static void init_voice(
     const double osc1_freq = convert_osc1_freq(osc1, note->key, unison_cent);
     const double osc1_duty = convert_duty(osc1->duty);
     synth2_osc_init(
-        &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty
+        &voice->osc1, osc1->wave, plugin->sample_rate, osc1_freq, osc1_duty, 0.0
     );
 
     const double osc2_freq = convert_osc2_freq(osc2, note->key, unison_cent);
     const double osc2_duty = convert_duty(osc2->duty);
     synth2_osc_init(
-        &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty
+        &voice->osc2, osc2->wave, plugin->sample_rate, osc2_freq, osc2_duty, 0.0
     );
 
     const double amp_a = convert_amp_a(amp);
