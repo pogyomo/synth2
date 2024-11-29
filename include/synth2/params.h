@@ -37,6 +37,12 @@ typedef enum synth2_param_id {
     SYNTH2_PARAM_ID_OSC2_TRACK,
     SYNTH2_PARAM_ID_OSCS_MIX,
     SYNTH2_PARAM_ID_OSCS_PHASE,
+    SYNTH2_PARAM_ID_MOD_TYPE,
+    SYNTH2_PARAM_ID_MOD_A,
+    SYNTH2_PARAM_ID_MOD_D,
+    SYNTH2_PARAM_ID_MOD_S,
+    SYNTH2_PARAM_ID_MOD_R,
+    SYNTH2_PARAM_ID_MOD_AMT,
     SYNTH2_PARAM_ID_AMP_A,
     SYNTH2_PARAM_ID_AMP_D,
     SYNTH2_PARAM_ID_AMP_S,
@@ -60,7 +66,7 @@ typedef enum synth2_param_id {
 typedef struct synth2_params_osc1 {
     synth2_osc_wave_t wave;
     uint8_t duty;  // 0..=128
-    int8_t pitch;  // -12..=12
+    int8_t pitch;  // -64..=64
     int8_t cent;   // -64..=64
     bool track;
 } synth2_params_osc1_t;
@@ -68,7 +74,7 @@ typedef struct synth2_params_osc1 {
 typedef struct synth2_params_osc2 {
     synth2_osc_wave_t wave;
     uint8_t duty;  // 0..=128
-    int8_t pitch;  // -12..=12
+    int8_t pitch;  // -64..=64
     int8_t cent;   // -64..=64
     bool track;
 } synth2_params_osc2_t;
@@ -78,6 +84,19 @@ typedef struct synth2_params_oscs {
     uint8_t phase;  // 0..=128
                     // Phase for voiceN, or max for randomize all.
 } synth2_params_oscs_t;
+
+typedef enum synth2_param_mod_type {
+    SYNTH2_PARAM_MOD_FM,
+    SYNTH2_PARAM_MOD_AM,
+    SYNTH2_PARAM_MOD_MIN = SYNTH2_PARAM_MOD_FM,
+    SYNTH2_PARAM_MOD_MAX = SYNTH2_PARAM_MOD_AM,
+} synth2_param_mod_type_t;
+
+typedef struct synth2_params_mod {
+    synth2_param_mod_type_t type;
+    uint8_t a, d, s, r;  // 0..=128
+    uint8_t amt;         // 0..=128
+} synth2_params_mod_t;
 
 typedef struct synth2_params_amp {
     uint8_t a, d, s, r;  // 0..=128
@@ -104,6 +123,7 @@ typedef struct synth2_params {
     synth2_params_osc1_t osc1;
     synth2_params_osc2_t osc2;
     synth2_params_oscs_t oscs;
+    synth2_params_mod_t mod;
     synth2_params_amp_t amp;
     synth2_params_filter_t filter;
     synth2_params_unison_t unison;

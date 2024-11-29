@@ -21,6 +21,7 @@ const synth2_params_t synth2_params_default_value = {
     {SYNTH2_OSC_WAVE_SINE, 128, 0, 0, false},
     {SYNTH2_OSC_WAVE_SINE, 128, 0, 0, false},
     {64, 0},
+    {SYNTH2_PARAM_MOD_FM, 0, 0, 128, 0, 0},
     {0, 0, 128, 0, 64},
     {SYNTH2_FILTER_LP, 0, 0, 128, 0, 0, 128, 0},
     {1, 0},
@@ -53,8 +54,8 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->flags = 0;
             strncpy(info->name, "Pitch", sizeof(info->name));
             strncpy(info->module, "Oscillator1", sizeof(info->module));
-            info->min_value = -12;
-            info->max_value = 12;
+            info->min_value = -64;
+            info->max_value = 64;
             info->default_value = params->osc1.pitch;
             return true;
         case SYNTH2_PARAM_ID_OSC1_CENT:
@@ -98,8 +99,8 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->flags = 0;
             strncpy(info->name, "Pitch", sizeof(info->name));
             strncpy(info->module, "Oscillator2", sizeof(info->module));
-            info->min_value = -12;
-            info->max_value = 12;
+            info->min_value = -64;
+            info->max_value = 64;
             info->default_value = params->osc2.pitch;
             return true;
         case SYNTH2_PARAM_ID_OSC2_CENT:
@@ -137,6 +138,61 @@ bool synth2_params_get_info(uint32_t param_index, clap_param_info_t *info) {
             info->min_value = 0;
             info->max_value = 128;
             info->default_value = params->oscs.phase;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_TYPE:
+            info->id = param_index;
+            info->flags = CLAP_PARAM_IS_ENUM | CLAP_PARAM_IS_STEPPED;
+            strncpy(info->name, "Type", sizeof(info->name));
+            strncpy(info->module, "Modulator", sizeof(info->module));
+            info->min_value = SYNTH2_PARAM_MOD_MIN;
+            info->max_value = SYNTH2_PARAM_MOD_MAX;
+            info->default_value = params->mod.type;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_A:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "A", sizeof(info->name));
+            strncpy(info->module, "Modulator", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->mod.a;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_D:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "D", sizeof(info->name));
+            strncpy(info->module, "Modulator", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->mod.d;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_S:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "S", sizeof(info->name));
+            strncpy(info->module, "Modulator", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->mod.s;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_R:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "R", sizeof(info->name));
+            strncpy(info->module, "Modulator", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = 0;
+            info->default_value = params->mod.r;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_AMT:
+            info->id = param_index;
+            info->flags = 0;
+            strncpy(info->name, "Amt", sizeof(info->name));
+            strncpy(info->module, "Modulator", sizeof(info->module));
+            info->min_value = 0;
+            info->max_value = 128;
+            info->default_value = params->mod.amt;
             return true;
         case SYNTH2_PARAM_ID_AMP_A:
             info->id = param_index;
@@ -330,6 +386,24 @@ bool synth2_params_get_value(
         case SYNTH2_PARAM_ID_OSCS_PHASE:
             *out_value = params->oscs.phase;
             return true;
+        case SYNTH2_PARAM_ID_MOD_TYPE:
+            *out_value = params->mod.type;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_A:
+            *out_value = params->mod.a;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_D:
+            *out_value = params->mod.d;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_S:
+            *out_value = params->mod.s;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_R:
+            *out_value = params->mod.r;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_AMT:
+            *out_value = params->mod.amt;
+            return true;
         case SYNTH2_PARAM_ID_AMP_A:
             *out_value = params->amp.a;
             return true;
@@ -402,9 +476,22 @@ bool synth2_params_value_to_text(
                 case SYNTH2_OSC_WAVE_SAW:
                     strncpy(out_buffer, "Saw", out_buffer_capacity);
                     return true;
-                default:  // SYNTH2_OSC_WAVE_SQUARE:
+                case SYNTH2_OSC_WAVE_SQUARE:
                     strncpy(out_buffer, "Square", out_buffer_capacity);
                     return true;
+                default:
+                    return false;
+            }
+        case SYNTH2_PARAM_ID_MOD_TYPE:
+            switch ((synth2_param_mod_type_t)value) {
+                case SYNTH2_PARAM_MOD_FM:
+                    strncpy(out_buffer, "FM", out_buffer_capacity);
+                    return true;
+                case SYNTH2_PARAM_MOD_AM:
+                    strncpy(out_buffer, "AM", out_buffer_capacity);
+                    return true;
+                default:
+                    return false;
             }
         case SYNTH2_PARAM_ID_FILTER_TYPE:
             switch ((synth2_filter_type_t)value) {
@@ -414,9 +501,11 @@ bool synth2_params_value_to_text(
                 case SYNTH2_FILTER_BP:
                     strncpy(out_buffer, "BP", out_buffer_capacity);
                     return true;
-                default:  // SYNTH2_FILTER_HP
+                case SYNTH2_FILTER_HP:
                     strncpy(out_buffer, "HP", out_buffer_capacity);
                     return true;
+                default:
+                    return false;
             }
             return true;
         case SYNTH2_PARAM_ID_OSC1_TRACK:
@@ -435,6 +524,11 @@ bool synth2_params_value_to_text(
         case SYNTH2_PARAM_ID_OSC2_CENT:
         case SYNTH2_PARAM_ID_OSCS_MIX:
         case SYNTH2_PARAM_ID_OSCS_PHASE:
+        case SYNTH2_PARAM_ID_MOD_A:
+        case SYNTH2_PARAM_ID_MOD_D:
+        case SYNTH2_PARAM_ID_MOD_S:
+        case SYNTH2_PARAM_ID_MOD_R:
+        case SYNTH2_PARAM_ID_MOD_AMT:
         case SYNTH2_PARAM_ID_AMP_A:
         case SYNTH2_PARAM_ID_AMP_D:
         case SYNTH2_PARAM_ID_AMP_S:
@@ -506,6 +600,24 @@ bool synth2_params_update(
             return true;
         case SYNTH2_PARAM_ID_OSCS_PHASE:
             params->oscs.phase = value;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_TYPE:
+            params->mod.type = value;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_A:
+            params->mod.a = value;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_D:
+            params->mod.d = value;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_S:
+            params->mod.s = value;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_R:
+            params->mod.r = value;
+            return true;
+        case SYNTH2_PARAM_ID_MOD_AMT:
+            params->mod.amt = value;
             return true;
         case SYNTH2_PARAM_ID_AMP_A:
             params->amp.a = value;
