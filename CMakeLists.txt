@@ -5,6 +5,11 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
 # Stuffs for unity
 set(UNITY_EXTENSION_FIXTURE ON)
 add_compile_definitions(UNITY_INCLUDE_DOUBLE)
