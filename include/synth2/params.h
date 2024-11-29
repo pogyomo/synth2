@@ -76,6 +76,7 @@ typedef struct synth2_params_osc2 {
 typedef struct synth2_params_oscs {
     uint8_t mix;    // 0..=128
     uint8_t phase;  // 0..=128
+                    // Phase for voiceN.
 } synth2_params_oscs_t;
 
 typedef struct synth2_params_amp {

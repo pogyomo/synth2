@@ -96,7 +96,9 @@ static inline double unison_cent_d(const synth2_params_unison_t *unison) {
 
 static inline double convert_oscs_phase(
     synth2_random_t *random,
-    const synth2_params_oscs_t *oscs
+    const synth2_params_oscs_t *oscs,
+    const synth2_params_unison_t *unison,
+    size_t unison_index
 ) {
     double phase;
     if (oscs->phase == 128) {
@@ -104,7 +106,8 @@ static inline double convert_oscs_phase(
         phase = (double)(value - SYNTH2_RANDOM_MIN) /
                 (double)(SYNTH2_RANDOM_MAX - SYNTH2_RANDOM_MIN);
     } else {
-        phase = (double)oscs->phase / 128.0;
+        const double d = ((double)oscs->phase / 128.0) / (double)unison->size;
+        phase = d * (double)unison_index;
     }
     return phase * PI2;
 }
@@ -122,7 +125,9 @@ static void init_voice(
     const synth2_params_filter_t *filter = &plugin->params.filter;
     const synth2_params_unison_t *unison = &plugin->params.unison;
     const double unison_cent = unison_cent_d(unison) * unison_index;
-    const double phase = convert_oscs_phase(&plugin->random, oscs);
+    const double phase = convert_oscs_phase(
+        &plugin->random, oscs, unison, unison_index
+    );
 
     const double osc1_freq = convert_osc1_freq(osc1, note->key, unison_cent);
     const double osc1_duty = convert_duty(osc1->duty);
