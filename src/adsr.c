@@ -70,6 +70,20 @@ void synth2_adsr_init(
     double s,
     double r
 ) {
+    assert(0.0 <= a && a <= 1.0);
+    assert(0.0 <= d && d <= 1.0);
+    assert(0.0 <= r && r <= 1.0);
+    synth2_adsr_init(this, fs, nt2s(a), nt2s(d), s, nt2s(r));
+}
+
+void synth2_adsr_init_concrete(
+    struct synth2_adsr *this,
+    double fs,
+    double a,
+    double d,
+    double s,
+    double r
+) {
     assert(0.0 <= s && s <= 1.0);
     this->fs = fs;
     this->a = a;
@@ -79,20 +93,6 @@ void synth2_adsr_init(
     this->top = 0.0;
     this->t = 0;
     this->hold = true;
-}
-
-void synth2_adsr_init_normalized(
-    struct synth2_adsr *this,
-    double fs,
-    double a,
-    double d,
-    double s,
-    double r
-) {
-    assert(0.0 <= a && a <= 1.0);
-    assert(0.0 <= d && d <= 1.0);
-    assert(0.0 <= r && r <= 1.0);
-    synth2_adsr_init(this, fs, nt2s(a), nt2s(d), s, nt2s(r));
 }
 
 void synth2_adsr_release(struct synth2_adsr *this) {

@@ -23,7 +23,7 @@ TEST_TEAR_DOWN(adsr) {}
 
 TEST(adsr, normal) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 1.0, 1.0, 0.5, 1.0);
+    synth2_adsr_init_concrete(&adsr, 5, 1.0, 1.0, 0.5, 1.0);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
@@ -85,7 +85,7 @@ TEST(adsr, normal) {
 
 TEST(adsr, stage_changes_between_sample) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 0.5, 0.8, 0.5, 0.5);
+    synth2_adsr_init_concrete(&adsr, 5, 0.5, 0.8, 0.5, 0.5);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
@@ -137,14 +137,14 @@ TEST(adsr, stage_changes_between_sample) {
 
 TEST(adsr, immediate_a) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 0.0, 1.0, 0.5, 1.0);
+    synth2_adsr_init_concrete(&adsr, 5, 0.0, 1.0, 0.5, 1.0);
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_D, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 1.0, synth2_adsr_sample(&adsr));
 }
 
 TEST(adsr, immediate_d) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 1.0, 0.0, 0.5, 1.0);
+    synth2_adsr_init_concrete(&adsr, 5, 1.0, 0.0, 0.5, 1.0);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));
@@ -162,7 +162,7 @@ TEST(adsr, immediate_d) {
 
 TEST(adsr, immediate_ad) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 0.0, 0.0, 0.5, 1.0);
+    synth2_adsr_init_concrete(&adsr, 5, 0.0, 0.0, 0.5, 1.0);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_S, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.5, synth2_adsr_sample(&adsr));
@@ -170,7 +170,7 @@ TEST(adsr, immediate_ad) {
 
 TEST(adsr, immediate_adr) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 0.0, 0.0, 0.5, 0.0);
+    synth2_adsr_init_concrete(&adsr, 5, 0.0, 0.0, 0.5, 0.0);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_S, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.5, synth2_adsr_sample(&adsr));
@@ -181,7 +181,7 @@ TEST(adsr, immediate_adr) {
 
 TEST(adsr, multiple_release) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 0.0, 0.0, 0.5, 1.0);
+    synth2_adsr_init_concrete(&adsr, 5, 0.0, 0.0, 0.5, 1.0);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_S, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.5, synth2_adsr_sample(&adsr));
@@ -211,7 +211,7 @@ TEST(adsr, multiple_release) {
 
 TEST(adsr, release_before_s) {
     struct synth2_adsr adsr;
-    synth2_adsr_init(&adsr, 5, 1.0, 1.0, 0.5, 1.0);
+    synth2_adsr_init_concrete(&adsr, 5, 1.0, 1.0, 0.5, 1.0);
 
     TEST_ASSERT_EQUAL(SYNTH2_ADSR_STAGE_A, synth2_adsr_stage(&adsr));
     TEST_ASSERT_DOUBLE_WITHIN(DELTA, 0.0, synth2_adsr_sample(&adsr));

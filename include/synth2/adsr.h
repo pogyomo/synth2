@@ -36,7 +36,7 @@ struct synth2_adsr {
 };
 
 /// Initialize adsr.
-/// a, d and r is in seconds, and s must be normalized.
+/// a, d, s and r must be normalized.
 void synth2_adsr_init(
     struct synth2_adsr *this,
     double fs,
@@ -46,9 +46,9 @@ void synth2_adsr_init(
     double r
 );
 
-/// Initialize adsr but accept normalized parameters except fs.
-/// These parameter is mapped into proper value by implementation-defind manner.
-void synth2_adsr_init_normalized(
+/// Initialize adsr but all parameters is passed as concrete value.
+/// a, d and r is in seconds, and s must be in [[0, 1]].
+void synth2_adsr_init_concrete(
     struct synth2_adsr *this,
     double fs,
     double a,
