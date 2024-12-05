@@ -28,7 +28,7 @@ enum synth2_filter_type {
 struct synth2_filter {
     enum synth2_filter_type type;
     struct synth2_adsr adsr;
-    double fs, cut, res;
+    double fs, amt, cut, res;
 
     double a0, a1, a2;
     double b0, b1, b2;
@@ -37,12 +37,13 @@ struct synth2_filter {
 };
 
 /// Initialize filter with parameters.
-/// cut and res must be normalized.
+/// cut and res must be in [[0, 1]], and amt must be in [[-1, 1]].
 void synth2_filter_init(
     struct synth2_filter *this,
     enum synth2_filter_type type,
     struct synth2_adsr adsr,
     double fs,
+    double amt,
     double cut,
     double res
 );

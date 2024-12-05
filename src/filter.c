@@ -19,6 +19,20 @@
 #include "synth2/helper.h"
 #include "synth2/macros.h"
 
+static inline double clamp01(double value) {
+    if (value < 0.0)
+        return 0.0;
+    else if (value > 1.0)
+        return 1.0;
+    else
+        return value;
+}
+
+static inline double next_cut(struct synth2_filter *this) {
+    const double amt = synth2_adsr_sample(&this->adsr) * this->amt;
+    return clamp01(this->cut + amt);
+}
+
 static inline double cut2f(double cut) {
     const double scaled = cut * 127.0;
     const int16_t key = scaled;
@@ -32,7 +46,7 @@ static inline double res2q(double res) {
 }
 
 static inline double calc_omega(struct synth2_filter *this) {
-    return 2.0 * PI * cut2f(this->cut) / this->fs;
+    return 2.0 * PI * cut2f(next_cut(this)) / this->fs;
 }
 
 static inline double calc_alpha(struct synth2_filter *this, double omega) {
@@ -88,11 +102,13 @@ void synth2_filter_init(
     enum synth2_filter_type type,
     struct synth2_adsr adsr,
     double fs,
+    double amt,
     double cut,
     double res
 ) {
     this->type = type;
     this->adsr = adsr;
+    this->amt = amt;
     this->fs = fs;
     this->cut = cut;
     this->res = res;
