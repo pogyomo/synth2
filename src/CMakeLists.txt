@@ -5,6 +5,7 @@ endif()
 
 add_library(synth2-core STATIC
     adsr.c
+    amp.c
     filter.c
     helper.c
 )
