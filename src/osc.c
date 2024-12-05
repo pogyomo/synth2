@@ -14,53 +14,30 @@
 
 #include "synth2/osc.h"
 
+#include <assert.h>
+
 #include "synth2/macros.h"
 #include "synth2/osc/wave-generator.h"
 
 void synth2_osc_init(
-    synth2_osc_t* osc,
-    synth2_osc_wave_t wave,
+    struct synth2_osc *this,
+    enum synth2_osc_wave wave,
     double sample_rate,
     double freq,
     double duty,
     double phase
 ) {
-    osc->wave = wave;
-    osc->sample_rate = sample_rate;
-    osc->freq = freq;
-    osc->duty = duty;
-    osc->phase = phase;
-    osc->prev = 0.0;
-    osc->gen = synth2_osc_wave_generator_by_wave(wave);
+    this->wave = wave;
+    this->sample_rate = sample_rate;
+    this->freq = freq;
+    this->duty = duty;
+    this->phase = phase;
+    this->gen = synth2_osc_wave_generator_by_wave(wave);
 }
 
-double synth2_osc_sample(synth2_osc_t* osc) {
-    osc->prev = osc->gen(osc->phase, osc->prev, osc->duty);
-    osc->phase += PI2 * osc->freq / osc->sample_rate;
-    if (osc->phase >= PI2) osc->phase -= PI2;
-    return osc->prev;
-}
-
-void synth2_osc_set_wave(synth2_osc_t* osc, synth2_osc_wave_t wave) {
-    osc->gen = synth2_osc_wave_generator_by_wave(osc->wave = wave);
-}
-
-synth2_osc_wave_t synth2_osc_get_wave(const synth2_osc_t* osc) {
-    return osc->wave;
-}
-
-void synth2_osc_set_freq(synth2_osc_t* osc, double freq) {
-    osc->freq = freq;
-}
-
-double synth2_osc_get_freq(const synth2_osc_t* osc) {
-    return osc->freq;
-}
-
-void synth2_osc_set_duty(synth2_osc_t* osc, double duty) {
-    osc->duty = duty;
-}
-
-double synth2_osc_get_duty(const synth2_osc_t* osc) {
-    return osc->duty;
+double synth2_osc_sample(struct synth2_osc *this) {
+    const double out = this->gen(this->phase, this->duty);
+    this->phase += PI2 * this->freq / this->sample_rate;
+    if (this->phase >= PI2) this->phase -= PI2;
+    return out;
 }

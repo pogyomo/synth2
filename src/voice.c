@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SYNTH2_EXT_PARAMS_H_
-#define SYNTH2_EXT_PARAMS_H_
+#include "synth2/voice.h"
 
-#include <clap/ext/params.h>
+void synth2_voice_init(struct synth2_voice *this) {
+    this->state = SYNTH2_VOICE_HOLD;
+}
 
-/// Parameters extension for this plugin.
-extern const clap_plugin_params_t synth2_plugin_params;
-
-#endif  // SYNTH2_EXT_PARAMS_H_
+double synth2_voice_render(struct synth2_voice *this) {
+    return 0.0;
+}

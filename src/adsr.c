@@ -16,47 +16,50 @@
 
 #include <assert.h>
 
-static inline double physical_time(const synth2_adsr_t* adsr) {
-    return (double)adsr->t / adsr->sample_rate;
+/// Convert [[0, 1]] normalized time into physical time.
+static inline double t2p(double t) {
+    return t * 2.0 + 0.005;
+}
+
+/// Convert logical elapsed time into physical time.
+static inline double l2p(double sample_rate, uint64_t t) {
+    return (double)t / sample_rate;
 }
 
 void synth2_adsr_init(
-    synth2_adsr_t* adsr,
+    struct synth2_adsr* this,
     double sample_rate,
     double a,
     double d,
     double s,
     double r
 ) {
+    assert(0.0 <= a && a <= 1.0);
+    assert(0.0 <= d && d <= 1.0);
     assert(0.0 <= s && s <= 1.0);
-    adsr->sample_rate = sample_rate;
-    adsr->a = a;
-    adsr->d = d;
-    adsr->s = s;
-    adsr->r = r;
-    adsr->top = 0.0;
-    adsr->t = 0;
-    adsr->keyoff = false;
+    assert(0.0 <= r && r <= 1.0);
+    this->sample_rate = sample_rate;
+    this->a = t2p(a);
+    this->d = t2p(d);
+    this->s = s;
+    this->r = t2p(r);
+    this->top = 0.0;
+    this->t = 0;
+    this->keyon = true;
 }
 
-void synth2_adsr_keyoff(synth2_adsr_t* adsr) {
-    if (adsr->keyoff) return;
-    adsr->t = 0;
-    adsr->keyoff = true;
-}
-
-synth2_adsr_stage_t synth2_adsr_current_stage(const synth2_adsr_t* adsr) {
-    const double t = physical_time(adsr);
-    if (!adsr->keyoff) {
-        if (t < adsr->a) {
+enum synth2_adsr_stage synth2_adsr_stage(const struct synth2_adsr* this) {
+    const double t = l2p(this->sample_rate, this->t);
+    if (this->keyon) {
+        if (t < this->a) {
             return SYNTH2_ADSR_STAGE_A;
-        } else if (t < adsr->a + adsr->d) {
+        } else if (t < this->a + this->d) {
             return SYNTH2_ADSR_STAGE_D;
         } else {
             return SYNTH2_ADSR_STAGE_S;
         }
     } else {
-        if (t < adsr->r) {
+        if (t < this->r) {
             return SYNTH2_ADSR_STAGE_R;
         } else {
             return SYNTH2_ADSR_STAGE_END;
@@ -64,62 +67,36 @@ synth2_adsr_stage_t synth2_adsr_current_stage(const synth2_adsr_t* adsr) {
     }
 }
 
-static double sample_keyon(synth2_adsr_t* adsr, const double t) {
-    if (t < adsr->a) {
-        return adsr->top = (1.0 / adsr->a) * t;
-    } else if (t < adsr->a + adsr->d) {
-        return adsr->top = 1.0 - ((1.0 - adsr->s) / adsr->d) * (t - adsr->a);
+void synth2_adsr_keyoff(struct synth2_adsr* this) {
+    if (!this->keyon) return;
+    this->t = 0;
+    this->keyon = false;
+}
+
+static double sample_keyon(struct synth2_adsr* this) {
+    const double t = l2p(this->sample_rate, this->t++);
+    if (t < this->a) {
+        return this->top = (1.0 / this->a) * t;
+    } else if (t < this->a + this->d) {
+        return this->top = 1.0 - ((1.0 - this->s) / this->d) * (t - this->a);
     } else {
-        return adsr->top = adsr->s;
+        return this->top = this->s;
     }
 }
 
-static double sample_keyoff(synth2_adsr_t* adsr, const double t) {
-    if (t < adsr->r) {
-        return adsr->top - (adsr->top / adsr->r) * t;
+static double sample_keyoff(struct synth2_adsr* this) {
+    const double t = l2p(this->sample_rate, this->t++);
+    if (t < this->r) {
+        return this->top - (this->top / this->r) * t;
     } else {
         return 0.0;
     }
 }
 
-double synth2_adsr_sample(synth2_adsr_t* adsr) {
-    const double t = physical_time(adsr);
-    adsr->t++;
-    if (adsr->keyoff) {
-        return sample_keyoff(adsr, t);
+double synth2_adsr_sample(struct synth2_adsr* this) {
+    if (this->keyon) {
+        return sample_keyon(this);
     } else {
-        return sample_keyon(adsr, t);
+        return sample_keyoff(this);
     }
-}
-
-void synth2_adsr_set_a(synth2_adsr_t* adsr, double a) {
-    adsr->a = a;
-}
-
-double synth2_adsr_get_a(const synth2_adsr_t* adsr) {
-    return adsr->a;
-}
-
-void synth2_adsr_set_d(synth2_adsr_t* adsr, double d) {
-    adsr->d = d;
-}
-
-double synth2_adsr_get_d(const synth2_adsr_t* adsr) {
-    return adsr->d;
-}
-
-void synth2_adsr_set_s(synth2_adsr_t* adsr, double s) {
-    adsr->s = s;
-}
-
-double synth2_adsr_get_s(const synth2_adsr_t* adsr) {
-    return adsr->s;
-}
-
-void synth2_adsr_set_r(synth2_adsr_t* adsr, double r) {
-    adsr->r = r;
-}
-
-double synth2_adsr_get_r(const synth2_adsr_t* adsr) {
-    return adsr->r;
 }

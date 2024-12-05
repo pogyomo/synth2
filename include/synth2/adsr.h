@@ -18,28 +18,29 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum synth2_adsr_stage {
+enum synth2_adsr_stage {
     SYNTH2_ADSR_STAGE_A,
     SYNTH2_ADSR_STAGE_D,
     SYNTH2_ADSR_STAGE_S,
     SYNTH2_ADSR_STAGE_R,
     SYNTH2_ADSR_STAGE_END,
-} synth2_adsr_stage_t;
+};
 
 /// This object provides functional for generate [0, 1] normalized value
 /// changes through time.
-typedef struct synth2_adsr {
+struct synth2_adsr {
     double sample_rate;
-    double a, d, s, r;
+    double a, d, r;  // Times for each stage. In seconds.
+    double s;        // Sustain level. In [[0, 1]].
     double top;
     uint64_t t;
-    bool keyoff;
-} synth2_adsr_t;
+    bool keyon;
+};
 
 /// Initialize this ADSR with given parameters.
-/// a, d and r is in seconds, and s must be in [0, 1].
+/// a, d, s, r must be in [[0, 1]].
 void synth2_adsr_init(
-    synth2_adsr_t* adsr,
+    struct synth2_adsr* this,
     double sample_rate,
     double a,
     double d,
@@ -48,36 +49,12 @@ void synth2_adsr_init(
 );
 
 /// Returns current state of the adsr.
-synth2_adsr_stage_t synth2_adsr_current_stage(const synth2_adsr_t* adsr);
+enum synth2_adsr_stage synth2_adsr_stage(const struct synth2_adsr* this);
 
 /// Change state into release.
-void synth2_adsr_keyoff(synth2_adsr_t* adsr);
+void synth2_adsr_keyoff(struct synth2_adsr* this);
 
 /// Sample value, prepear for next sample.
-double synth2_adsr_sample(synth2_adsr_t* adsr);
-
-/// Returns current attack time.
-void synth2_adsr_set_a(synth2_adsr_t* adsr, double a);
-
-/// Set attack time.
-double synth2_adsr_get_a(const synth2_adsr_t* adsr);
-
-/// Returns current decay time.
-void synth2_adsr_set_d(synth2_adsr_t* adsr, double d);
-
-/// Set decay time.
-double synth2_adsr_get_d(const synth2_adsr_t* adsr);
-
-/// Returns current sustain.
-void synth2_adsr_set_s(synth2_adsr_t* adsr, double s);
-
-/// Set sustain.
-double synth2_adsr_get_s(const synth2_adsr_t* adsr);
-
-/// Returns current release time.
-void synth2_adsr_set_r(synth2_adsr_t* adsr, double r);
-
-/// Set release time.
-double synth2_adsr_get_r(const synth2_adsr_t* adsr);
+double synth2_adsr_sample(struct synth2_adsr* this);
 
 #endif  // SYNTH2_ADSR_H_

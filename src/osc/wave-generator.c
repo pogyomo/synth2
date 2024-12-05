@@ -18,34 +18,34 @@
 
 #include "synth2/macros.h"
 
-static double wave_generator_sine(double x, double prev, double duty) {
-    return sin(x);
+static double generator_sine(double phase, double duty) {
+    return sin(phase);
 }
 
-static double wave_generator_triangle(double x, double prev, double duty) {
-    const double p = x / PI2 + 1.0 / 4.0;
+static double generator_triangle(double phase, double duty) {
+    const double p = phase / PI2 + 1.0 / 4.0;
     return 4.0 * fabs(p - floor(p + 1.0 / 2.0)) - 1.0;
 }
 
-static double wave_generator_saw(double x, double prev, double duty) {
-    return (2.0 * x / PI2) - 1.0;
+static double generator_saw(double phase, double duty) {
+    return (2.0 * phase / PI2) - 1.0;
 }
 
-static double wave_generator_square(double x, double prev, double duty) {
-    return x < PI * duty ? 1.0 : -1.0;
+static double generator_square(double phase, double duty) {
+    return phase < PI * duty ? 1.0 : -1.0;
 }
 
 synth2_osc_wave_generator synth2_osc_wave_generator_by_wave(
-    synth2_osc_wave_t wave
+    enum synth2_osc_wave wave
 ) {
     switch (wave) {
-        case SYNTH2_OSC_WAVE_SINE:
-            return wave_generator_sine;
-        case SYNTH2_OSC_WAVE_TRIANGLE:
-            return wave_generator_triangle;
-        case SYNTH2_OSC_WAVE_SAW:
-            return wave_generator_saw;
-        default:  // SYNTH2_OSC_WAVE_SQUARE
-            return wave_generator_square;
+        case SYNTH2_OSC_SINE:
+            return generator_sine;
+        case SYNTH2_OSC_TRIANGLE:
+            return generator_triangle;
+        case SYNTH2_OSC_SAW:
+            return generator_saw;
+        default:  // SYNTH2_OSC_SQUARE
+            return generator_square;
     }
 }

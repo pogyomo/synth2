@@ -20,20 +20,19 @@
 #define SYNTH2_RANDOM_MIN 1
 #define SYNTH2_RANDOM_MAX UINT32_MAX
 
-typedef uint32_t synth2_random_value_t;
-
-typedef struct synth2_random {
-    synth2_random_value_t x, y, z, w;
-} synth2_random_t;
+/// Generates pseudo random numbers.
+struct synth2_random {
+    uint32_t x, y, z, w;
+};
 
 /// Initialize random generator with given seed.
 /// Seed must be in between SYNTH2_RANDOM_MIN and SYNTH2_RANDOM_MAX.
-void synth2_random_init(synth2_random_t *random, synth2_random_value_t seed);
+void synth2_random_init(struct synth2_random *this, uint32_t seed);
 
 /// Initialize random generator with default state.
-void synth2_random_default(synth2_random_t *random);
+void synth2_random_default(struct synth2_random *this);
 
 /// Generate random number between SYNTH2_RANDOM_MIN and SYNTH2_RANDOM_MAX.
-synth2_random_value_t synth2_random_gen(synth2_random_t *random);
+uint32_t synth2_random_gen(struct synth2_random *this);
 
 #endif  // SYNTH2_RANDOM_H_

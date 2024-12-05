@@ -18,99 +18,116 @@
 
 #include "synth2/filter.h"
 
+#include <assert.h>
 #include <math.h>
+#include <stdint.h>
 
+#include "synth2/helper.h"
 #include "synth2/macros.h"
+
+static inline double clamp01(double value) {
+    if (value < 0.0) {
+        return 0.0;
+    } else if (value > 1.0) {
+        return 1.0;
+    } else {
+        return value;
+    }
+}
+
+static inline double cut2f(double cut) {
+    const double scaled = cut * 127.0;  // scaled in [[0, 127]]
+    const int16_t key = scaled;
+    const int16_t cent = modf(scaled, &(double){0}) * 100.0;
+    return k2f(key, cent);
+}
 
 static inline double res2q(double res) {
     const double base = 1.0 / sqrt(2.0);
     return res * (4.0 - base) + base;
 }
 
-static void init_params_lp(synth2_filter_t *filter) {
-    const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
-    const double alpha = sin(omega) / (2.0 * res2q(filter->res));
-    filter->a0 = 1.0 + alpha;
-    filter->a1 = -2.0 * cos(omega);
-    filter->a2 = 1.0 - alpha;
-    filter->b0 = (1.0 - cos(omega)) / 2.0;
-    filter->b1 = 1.0 - cos(omega);
-    filter->b2 = (1.0 - cos(omega)) / 2.0;
+static inline double calc_omega(struct synth2_filter *this) {
+    return 2.0 * PI * cut2f(this->cut) / this->sample_rate;
 }
 
-static void init_params_bp(synth2_filter_t *filter) {
-    const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
-    const double alpha = sin(omega) / (2.0 * res2q(filter->res));
-    filter->a0 = 1.0 + alpha;
-    filter->a1 = -2.0 * cos(omega);
-    filter->a2 = 1.0 - alpha;
-    filter->b0 = alpha;
-    filter->b1 = 0.0;
-    filter->b2 = -alpha;
+static inline double calc_alpha(struct synth2_filter *this, double omega) {
+    return sin(omega) / (2.0 * res2q(this->res));
 }
 
-static void init_params_hp(synth2_filter_t *filter) {
-    const double omega = 2.0 * PI * filter->freq / filter->sample_rate;
-    const double alpha = sin(omega) / (2.0 * res2q(filter->res));
-    filter->a0 = 1.0 + alpha;
-    filter->a1 = -2.0 * cos(omega);
-    filter->a2 = 1.0 - alpha;
-    filter->b0 = (1.0 + cos(omega)) / 2.0;
-    filter->b1 = -(1.0 + cos(omega));
-    filter->b2 = (1.0 + cos(omega)) / 2.0;
+static void update_params_lp(struct synth2_filter *this) {
+    const double omega = calc_omega(this);
+    const double alpha = calc_alpha(this, omega);
+    this->a0 = 1.0 + alpha;
+    this->a1 = -2.0 * cos(omega);
+    this->a2 = 1.0 - alpha;
+    this->b0 = (1.0 - cos(omega)) / 2.0;
+    this->b1 = 1.0 - cos(omega);
+    this->b2 = (1.0 - cos(omega)) / 2.0;
+}
+
+static void update_params_bp(struct synth2_filter *this) {
+    const double omega = calc_omega(this);
+    const double alpha = calc_alpha(this, omega);
+    this->a0 = 1.0 + alpha;
+    this->a1 = -2.0 * cos(omega);
+    this->a2 = 1.0 - alpha;
+    this->b0 = alpha;
+    this->b1 = 0.0;
+    this->b2 = -alpha;
+}
+
+static void update_params_hp(struct synth2_filter *this) {
+    const double omega = calc_omega(this);
+    const double alpha = calc_alpha(this, omega);
+    this->a0 = 1.0 + alpha;
+    this->a1 = -2.0 * cos(omega);
+    this->a2 = 1.0 - alpha;
+    this->b0 = (1.0 + cos(omega)) / 2.0;
+    this->b1 = -(1.0 + cos(omega));
+    this->b2 = (1.0 + cos(omega)) / 2.0;
+}
+
+static void update_params(struct synth2_filter *this) {
+    switch (this->type) {
+        case SYNTH2_FILTER_LP:
+            update_params_lp(this);
+            break;
+        case SYNTH2_FILTER_BP:
+            update_params_bp(this);
+            break;
+        default:  // SYNTH2_FILTER_HP
+            update_params_hp(this);
+            break;
+    }
 }
 
 void synth2_filter_init(
-    synth2_filter_t *filter,
-    synth2_filter_type_t type,
+    struct synth2_filter *this,
+    enum synth2_filter_type type,
     double sample_rate,
-    double freq,
+    double cut,
     double res
 ) {
-    filter->type = type;
-    filter->sample_rate = sample_rate;
-    filter->freq = freq;
-    filter->res = res;
-    filter->in1 = filter->out1 = 0.0;
-    filter->in2 = filter->out2 = 0.0;
-    switch (type) {
-        case SYNTH2_FILTER_LP:
-            init_params_lp(filter);
-            break;
-        case SYNTH2_FILTER_BP:
-            init_params_bp(filter);
-            break;
-        default:  // SYNTH2_FILTER_HP
-            init_params_hp(filter);
-            break;
-    }
+    this->type = type;
+    this->sample_rate = sample_rate;
+    this->cut = cut;
+    this->res = res;
+    this->in1 = this->out1 = 0.0;
+    this->in2 = this->out2 = 0.0;
 }
 
-double synth2_filter_process(synth2_filter_t *filter, double signal) {
-    const double n1 = filter->b0 / filter->a0 * signal;
-    const double n2 = filter->b1 / filter->a0 * filter->in1;
-    const double n3 = filter->b2 / filter->a0 * filter->in2;
-    const double n4 = filter->a1 / filter->a0 * filter->out1;
-    const double n5 = filter->a2 / filter->a0 * filter->out2;
+double synth2_filter_process(struct synth2_filter *this, double signal) {
+    update_params(this);
+    const double n1 = this->b0 / this->a0 * signal;
+    const double n2 = this->b1 / this->a0 * this->in1;
+    const double n3 = this->b2 / this->a0 * this->in2;
+    const double n4 = this->a1 / this->a0 * this->out1;
+    const double n5 = this->a2 / this->a0 * this->out2;
     const double output = n1 + n2 + n3 - n4 - n5;
-    filter->in2 = filter->in1;
-    filter->in1 = signal;
-    filter->out2 = filter->out1;
-    filter->out1 = output;
+    this->in2 = this->in1;
+    this->in1 = signal;
+    this->out2 = this->out1;
+    this->out1 = output;
     return output;
-}
-
-void synth2_filter_set_freq(synth2_filter_t *filter, double freq) {
-    filter->freq = freq;
-    switch (filter->type) {
-        case SYNTH2_FILTER_LP:
-            init_params_lp(filter);
-            break;
-        case SYNTH2_FILTER_BP:
-            init_params_bp(filter);
-            break;
-        default:  // SYNTH2_FILTER_HP
-            init_params_hp(filter);
-            break;
-    }
 }

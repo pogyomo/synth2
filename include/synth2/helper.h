@@ -18,6 +18,7 @@
 #include <stdint.h>
 
 /// Convert midi1 key number (0..127) into frequency.
-double k2f(int16_t key, double cent);
+/// cent must be in [[-100, 100]]
+double k2f(int16_t key, int16_t cent);
 
 #endif  // SYNTH2_HELPER_H_

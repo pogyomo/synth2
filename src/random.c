@@ -16,25 +16,25 @@
 
 #include <assert.h>
 
-void synth2_random_init(synth2_random_t *random, synth2_random_value_t seed) {
+void synth2_random_init(struct synth2_random *this, uint32_t seed) {
     assert(SYNTH2_RANDOM_MIN <= seed && seed <= SYNTH2_RANDOM_MAX);
-    random->x = 123456789;
-    random->y = 362436069;
-    random->z = 521288629;
-    random->w = seed;
+    this->x = 123456789;
+    this->y = 362436069;
+    this->z = 521288629;
+    this->w = seed;
 }
 
-void synth2_random_default(synth2_random_t *random) {
-    synth2_random_init(random, 88675123);
+void synth2_random_default(struct synth2_random *this) {
+    synth2_random_init(this, 88675123);
 }
 
-synth2_random_value_t synth2_random_gen(synth2_random_t *random) {
+uint32_t synth2_random_gen(struct synth2_random *this) {
     // use xorshift128 algorithm
-    const synth2_random_value_t x = random->x;
-    const synth2_random_value_t w = random->w;
-    const synth2_random_value_t t = x ^ (x << 11);
-    random->x = random->y;
-    random->y = random->z;
-    random->z = random->w;
-    return random->w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
+    const uint32_t x = this->x;
+    const uint32_t w = this->w;
+    const uint32_t t = x ^ (x << 11);
+    this->x = this->y;
+    this->y = this->z;
+    this->z = this->w;
+    return this->w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
 }

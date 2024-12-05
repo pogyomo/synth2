@@ -15,37 +15,36 @@
 #ifndef SYNTH2_FILTER_H_
 #define SYNTH2_FILTER_H_
 
-typedef enum synth2_filter_type {
+enum synth2_filter_type {
     SYNTH2_FILTER_LP,
     SYNTH2_FILTER_BP,
     SYNTH2_FILTER_HP,
     SYNTH2_FILTER_MIN = SYNTH2_FILTER_LP,
     SYNTH2_FILTER_MAX = SYNTH2_FILTER_HP,
-} synth2_filter_type_t;
+};
 
-typedef struct synth2_filter {
-    synth2_filter_type_t type;
-    double sample_rate, freq, res;
+struct synth2_filter {
+    enum synth2_filter_type type;
+    double sample_rate, cut, res;
+
     double a0, a1, a2;
     double b0, b1, b2;
     double in1, out1;
     double in2, out2;
-} synth2_filter_t;
+};
 
 /// Initialize filter with parameters.
-/// freq is in hz, and res is in [0, 1].
+/// cut and res must be in [[0, 1]].
+/// amt must be in [[-1, 1]]
 void synth2_filter_init(
-    synth2_filter_t *filter,
-    synth2_filter_type_t type,
+    struct synth2_filter *this,
+    enum synth2_filter_type type,
     double sample_rate,
-    double freq,
+    double cut,
     double res
 );
 
 /// Filter given signal.
-double synth2_filter_process(synth2_filter_t *filter, double signal);
-
-/// Set frequencey.
-void synth2_filter_set_freq(synth2_filter_t *filter, double freq);
+double synth2_filter_process(struct synth2_filter *this, double signal);
 
 #endif  // SYNTH2_FILTER_H_
