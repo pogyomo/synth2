@@ -48,6 +48,9 @@ void synth2_filter_init(
     double res
 );
 
+/// Release internal adsr.
+void synth2_filter_release(struct synth2_filter *this);
+
 /// Filter given signal.
 double synth2_filter_process(struct synth2_filter *this, double signal);
 

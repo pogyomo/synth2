@@ -116,6 +116,10 @@ void synth2_filter_init(
     this->in2 = this->out2 = 0.0;
 }
 
+void synth2_filter_release(struct synth2_filter *this) {
+    synth2_adsr_release(&this->adsr);
+}
+
 double synth2_filter_process(struct synth2_filter *this, double signal) {
     update_params(this);
     const double n1 = this->b0 / this->a0 * signal;
