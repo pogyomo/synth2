@@ -1,83 +1,56 @@
-// Copyright 2024 pogyomo
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #ifndef SYNTH2_ADSR_H_
 #define SYNTH2_ADSR_H_
 
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum synth2_adsr_stage {
+enum synth2_adsr_stage {
     SYNTH2_ADSR_STAGE_A,
     SYNTH2_ADSR_STAGE_D,
     SYNTH2_ADSR_STAGE_S,
     SYNTH2_ADSR_STAGE_R,
     SYNTH2_ADSR_STAGE_END,
-} synth2_adsr_stage_t;
+};
 
-/// This object provides functional for generate [0, 1] normalized value
-/// changes through time.
-typedef struct synth2_adsr {
-    double sample_rate;
-    double a, d, s, r;
-    double top;
-    uint64_t t;
-    bool keyoff;
-} synth2_adsr_t;
+struct synth2_adsr {
+    double fs;       // Sample rate.
+    double a, d, r;  // Times for each stages. In seconds.
+    double s;        // Sustain level. Must be in [[0, 1]].
+    double top;      // Latest sampled value before release.
+    uint64_t t;      // Logical elapsed time.
+    bool hold;       // false if release called.
+};
 
-/// Initialize this ADSR with given parameters.
-/// a, d and r is in seconds, and s must be in [0, 1].
+/// Initialize adsr.
+/// a, d and r is in seconds, and s must be normalized.
 void synth2_adsr_init(
-    synth2_adsr_t* adsr,
-    double sample_rate,
+    struct synth2_adsr *this,
+    double fs,
     double a,
     double d,
     double s,
     double r
 );
 
-/// Returns current state of the adsr.
-synth2_adsr_stage_t synth2_adsr_current_stage(const synth2_adsr_t* adsr);
+/// Initialize adsr but accept normalized parameters except fs.
+/// These parameter is mapped into proper value by implementation-defind manner.
+void synth2_adsr_init_normalized(
+    struct synth2_adsr *this,
+    double fs,
+    double a,
+    double d,
+    double s,
+    double r
+);
 
-/// Change state into release.
-void synth2_adsr_keyoff(synth2_adsr_t* adsr);
+/// Go on to release stage.
+/// There is no effect for calling this more than twice.
+void synth2_adsr_release(struct synth2_adsr *this);
 
-/// Sample value, prepear for next sample.
-double synth2_adsr_sample(synth2_adsr_t* adsr);
+/// Returns current stage.
+enum synth2_adsr_stage synth2_adsr_stage(struct synth2_adsr *this);
 
-/// Returns current attack time.
-void synth2_adsr_set_a(synth2_adsr_t* adsr, double a);
-
-/// Set attack time.
-double synth2_adsr_get_a(const synth2_adsr_t* adsr);
-
-/// Returns current decay time.
-void synth2_adsr_set_d(synth2_adsr_t* adsr, double d);
-
-/// Set decay time.
-double synth2_adsr_get_d(const synth2_adsr_t* adsr);
-
-/// Returns current sustain.
-void synth2_adsr_set_s(synth2_adsr_t* adsr, double s);
-
-/// Set sustain.
-double synth2_adsr_get_s(const synth2_adsr_t* adsr);
-
-/// Returns current release time.
-void synth2_adsr_set_r(synth2_adsr_t* adsr, double r);
-
-/// Set release time.
-double synth2_adsr_get_r(const synth2_adsr_t* adsr);
+/// Returns value in [[0, 1]], increase internal times.
+double synth2_adsr_sample(struct synth2_adsr *this);
 
 #endif  // SYNTH2_ADSR_H_
