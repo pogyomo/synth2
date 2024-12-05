@@ -5,6 +5,8 @@ endif()
 
 add_library(synth2-core STATIC
     adsr.c
+    filter.c
+    helper.c
 )
 target_include_directories(synth2-core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(synth2-core PUBLIC ${SYNTH2_LINK_LIBRARIES})
