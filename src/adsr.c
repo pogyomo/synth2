@@ -18,7 +18,7 @@
 
 /// Convert normalized times into seconds.
 static inline double nt2s(double t) {
-    return t * 30;
+    return t * 30 + 0.0005;
 }
 
 /// Convert logical times into seconds.
